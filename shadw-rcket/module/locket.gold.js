@@ -1,10 +1,13 @@
-// ========= ID ========= //
+// ========= CelestiaX Module ========= //
+// Name: Locket Gold
+// Version: V1.0.0
+// ==================================== //
+
 const mapping = {
   '%E8%BD%A6%E7%A5%A8%E7%A5%A8': ['vip+watch_vip'],
   'Locket': ['Gold']
 };
-
-// =========  @Celestia ========= // 
+ 
 var ua=$request.headers["User-Agent"]||$request.headers["user-agent"],
     obj=JSON.parse($response.body);
 
