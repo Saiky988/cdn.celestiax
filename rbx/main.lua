@@ -24,11 +24,16 @@ end
 
 JoinTeam()
 
-hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Death), function()
-    -- empty block
+-- Some executors don't expose hookfunction; pcall everything to avoid a crash.
+pcall(function()
+    if hookfunction then
+        hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Death), function() end)
+    end
 end)
-hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Respawn), function()
-    -- empty block
+pcall(function()
+    if hookfunction then
+        hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Respawn), function() end)
+    end
 end)
 if game.PlaceId == 2753915549 or game.PlaceId == 85211729168715 then
     World1 = true
