@@ -24,16 +24,11 @@ end
 
 JoinTeam()
 
--- Some executors don't expose hookfunction; pcall everything to avoid a crash.
-pcall(function()
-    if hookfunction then
-        hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Death), function() end)
-    end
+hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Death), function()
+    -- empty block
 end)
-pcall(function()
-    if hookfunction then
-        hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Respawn), function() end)
-    end
+hookfunction(require(game:GetService("ReplicatedStorage").Effect.Container.Respawn), function()
+    -- empty block
 end)
 if game.PlaceId == 2753915549 or game.PlaceId == 85211729168715 then
     World1 = true
@@ -3733,343 +3728,199 @@ function CheckItemBPCRBPCR(v463)
     end
 end
 --====================================================================--
---// CELESTIA HUB — Redz->Fluent UI Compatibility Shim
---// Keeps all Redz logic intact while rendering with Fluent UI.
---====================================================================--
-local Fluent            = loadstring(game:HttpGet("https://raw.githubusercontent.com/discoart/FluentPlus/refs/heads/main/Beta.lua", true))()
-local SaveManager       = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
-local InterfaceManager  = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+  -- Converted to Fluent UI (FluentPlus) — logic & functions preserved
+  --====================================================================--
+  if not game then warn("Error: 'game' not found.") return end
 
-local _UIS  = game:GetService("UserInputService")
-local _HS   = game:GetService("HttpService")
-local _LP   = game:GetService("Players").LocalPlayer
-local _GUI  = (gethui and gethui()) or (pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui")) or _LP:WaitForChild("PlayerGui")
+  local Players = game:GetService("Players")
+  local ReplicatedStorage = game:GetService("ReplicatedStorage")
+  local RunService = game:GetService("RunService")
+  local UserInputService = game:GetService("UserInputService")
+  local TweenService = game:GetService("TweenService")
+  local HttpService = game:GetService("HttpService")
 
--- vu32 = Redz library facade
-local vu32 = {}
-local _FluentWindow
+  local LocalPlayer = Players.LocalPlayer
 
--- Helper: pick first non-nil
-local function pick(...)
-    for i = 1, select("#", ...) do
-        local v = select(i, ...)
-        if v ~= nil then return v end
-    end
-end
+  local TargetGui = (gethui and gethui())
+      or (pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui"))
+      or LocalPlayer:WaitForChild("PlayerGui")
 
--- Helper: index of value in array
-local function indexOf(t, val)
-    if type(t) ~= "table" or val == nil then return nil end
-    for i, v in ipairs(t) do if v == val then return i end end
-    return nil
-end
+  local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/discoart/FluentPlus/refs/heads/main/Beta.lua", true))()
+  local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+  local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+  local Options = Fluent.Options
 
--- Window class
-local Window = {}
-Window.__index = Window
+  local v466 = Fluent:CreateWindow({
+      Title = "Night Slayer Hub [V7]",
+      SubTitle = "By Real_NightSlayer",
+      Searchable = true,
+      TabWidth = 160,
+      Size = UDim2.fromOffset(560, 420),
+      Acrylic = true,
+      Theme = "Dark",
+      MinimizeKey = Enum.KeyCode.LeftControl,
+      UserInfo = true,
+      UserInfoTitle = LocalPlayer.DisplayName,
+      UserInfoSubtitle = "Night Slayer",
+      UserInfoSubtitleColor = Color3.fromRGB(71, 123, 255)
+  })
 
-function vu32:MakeWindow(opts)
-    opts = opts or {}
-    _FluentWindow = Fluent:CreateWindow({
-        Title           = "Celestia Hub",
-        SubTitle        = opts.SubTitle or "",
-        Searchable      = true,
-        TabWidth        = 160,
-        Size            = UDim2.fromOffset(560, 400),
-        Acrylic         = true,
-        Theme           = "Dark",
-        MinimizeKey     = Enum.KeyCode.LeftControl,
-        UserInfo        = true,
-        UserInfoTitle   = _LP.DisplayName,
-        UserInfoSubtitle= "Celestia Hub User",
-        UserInfoSubtitleColor = Color3.fromRGB(71, 123, 255),
-    })
-    local w = setmetatable({ _f = _FluentWindow, _saveFolder = opts.SaveFolder or "CelestiaHub" }, Window)
-    -- defer settings tab creation until end
-    return w
-end
+  -- vu32 stub (compat for legacy Redz API calls like SetScale)
+  local vu32 = setmetatable({
+      SetScale = function() end,
+      SetSize  = function() end,
+  }, { __index = function() return function() end end })
 
-function vu32:SetScale(scale)
-    -- Map Redz scale numbers to Fluent window sizes
-    if not _FluentWindow then return end
-    local size
-    if scale and scale <= 300 then
-        size = UDim2.fromOffset(720, 480)
-    elseif scale and scale <= 450 then
-        size = UDim2.fromOffset(560, 400)
-    else
-        size = UDim2.fromOffset(420, 320)
-    end
-    pcall(function() _FluentWindow:SetSize(size) end)
-end
+  -- Mobile minimize button (draggable) — replaces Redz AddMinimizeButton
+  do
+      local screenGui = Instance.new("ScreenGui")
+      local btn = Instance.new("ImageButton")
+      local corner = Instance.new("UICorner")
+      screenGui.Name = HttpService:GenerateGUID(false)
+      screenGui.Parent = TargetGui
+      screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+      btn.Parent = screenGui
+      btn.BackgroundColor3 = Color3.fromRGB(255,255,255)
+      btn.BackgroundTransparency = 1
+      btn.BorderSizePixel = 0
+      btn.Position = UDim2.new(0, 20, 0, 100)
+      btn.Size = UDim2.new(0, 48, 0, 48)
+      btn.Image = "rbxassetid://96779554580445"
+      btn.ImageTransparency = 0.2
+      corner.CornerRadius = UDim.new(0.5, 0)
+      corner.Parent = btn
+      local dragging, dragInput, touchPos, btnPos
+      btn.InputBegan:Connect(function(i)
+          if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+              dragging = true; touchPos = i.Position; btnPos = btn.Position
+              i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then dragging = false end end)
+          end
+      end)
+      btn.InputChanged:Connect(function(i)
+          if i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch then dragInput = i end
+      end)
+      UserInputService.InputChanged:Connect(function(i)
+          if i == dragInput and dragging then
+              local d = i.Position - touchPos
+              btn.Position = UDim2.new(btnPos.X.Scale, btnPos.X.Offset + d.X, btnPos.Y.Scale, btnPos.Y.Offset + d.Y)
+          end
+      end)
+      btn.MouseButton1Click:Connect(function() v466:Minimize() end)
+  end
 
-function Window:AddMinimizeButton(opts)
-    opts = opts or {}
-    local btnOpts = opts.Button or {}
-    local size    = opts.Size or UDim2.new(0, 48, 0, 48)
-    local corner  = opts.Corner or { CornerRadius = UDim.new(0.25, 0) }
+  -- Patch tabs: legacy-compat AddSection/AddParagraph/AddDiscordInvite + UID auto-gen
+  local _UIDCounter = 0
+  local function _genUID(prefix) _UIDCounter = _UIDCounter + 1; return (prefix or "UID") .. "_" .. _UIDCounter end
 
-    local sg = Instance.new("ScreenGui")
-    sg.Name = _HS:GenerateGUID(false)
-    sg.Parent = _GUI
-    sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    sg.ResetOnSpawn = false
+  local function _patchTab(tab)
+      -- Legacy AddSection({"Name"}) compat
+      local origSec = tab.AddSection
+      tab.AddSection = function(self, opts)
+          if type(opts) == "table" then opts = opts[1] or opts.Name or opts.Title or "Section" end
+          return origSec(self, opts)
+      end
+      -- AddParagraph: rename Desc->Content; attach :Set(content) for legacy v:Set(...) calls
+      local origPara = tab.AddParagraph
+      tab.AddParagraph = function(self, opts)
+          opts = opts or {}
+          if opts.Desc and not opts.Content then opts.Content = opts.Desc; opts.Desc = nil end
+          opts.Content = opts.Content or ""
+          local p = origPara(self, opts)
+          if p then
+              local function setText(_, v)
+                  v = tostring(v or "")
+                  if p.SetDesc then pcall(p.SetDesc, p, v)
+                  elseif p.SetContent then pcall(p.SetContent, p, v)
+                  elseif p.SetText then pcall(p.SetText, p, v)
+                  end
+              end
+              p.Set = setText
+              p.SetText = p.SetText or setText
+          end
+          return p
+      end
+      -- AddDiscordInvite -> button that copies invite + notifies
+      tab.AddDiscordInvite = function(self, opts)
+          opts = opts or {}
+          return tab:AddButton({
+              Title = opts.Name or "Discord",
+              Description = opts.Description or opts.Desc or "Click to copy invite",
+              Callback = function()
+                  pcall(function() (setclipboard or toclipboard or function() end)(opts.Invite or "") end)
+                  Fluent:Notify({ Title = opts.Name or "Discord", Content = "Invite copied to clipboard.", Duration = 4 })
+              end,
+          })
+      end
+      -- Wrap element constructors that need a UID first arg
+      local function wrapWithUID(method, prefix, keyMap, extra)
+          local orig = tab[method]
+          if not orig then return end
+          tab[method] = function(self, a, b)
+              local id, opts
+              if type(a) == "string" then
+                  id, opts = a, b or {}
+              else
+                  opts = a or {}
+                  id = opts.Flag or _genUID(prefix)
+              end
+              opts.Flag = nil
+              if opts.Name and not opts.Title then opts.Title = opts.Name; opts.Name = nil end
+              if keyMap then for k,v in pairs(keyMap) do
+                  if opts[k] ~= nil and opts[v] == nil then opts[v] = opts[k]; opts[k] = nil end
+              end end
+              if extra then extra(opts) end
+              return orig(self, id, opts)
+          end
+      end
+      wrapWithUID("AddToggle", "Toggle")
+      wrapWithUID("AddSlider", "Slider", { Increase = "_drop" }, function(o)
+          o._drop = nil
+          if o.Rounding == nil then o.Rounding = 0 end
+          if o.Min == nil then o.Min = 0 end
+          if o.Max == nil then o.Max = 100 end
+          if o.Default == nil then o.Default = o.Min end
+      end)
+      wrapWithUID("AddDropdown", "Dropdown", { Options = "Values" }, function(o)
+          if o.Multi == nil then o.Multi = false end
+          if o.Values == nil then o.Values = {} end
+      end)
+      wrapWithUID("AddInput", "Input", nil, function(o)
+          if o.Placeholder == nil then o.Placeholder = "" end
+          if o.Default == nil then o.Default = "" end
+      end)
+      wrapWithUID("AddColorpicker", "Color")
+      wrapWithUID("AddKeybind", "Keybind", nil, function(o)
+          if o.Mode == nil then o.Mode = "Toggle" end
+          if o.Default == nil then o.Default = "Unknown" end
+      end)
+      -- AddButton: just rename Name->Title
+      local origBtn = tab.AddButton
+      if origBtn then
+          tab.AddButton = function(self, opts)
+              opts = opts or {}
+              if opts.Name and not opts.Title then opts.Title = opts.Name; opts.Name = nil end
+              return origBtn(self, opts)
+          end
+      end
+  end
 
-    local btn = Instance.new("ImageButton")
-    btn.Parent = sg
-    btn.BackgroundColor3 = Color3.fromRGB(255,255,255)
-    btn.BackgroundTransparency = pick(btnOpts.BackgroundTransparency, 1)
-    btn.BorderSizePixel = 0
-    btn.Position = UDim2.new(0, 20, 0, 80)
-    btn.Size = size
-    btn.Image = btnOpts.Image or "rbxassetid://96779554580445"
-    btn.ImageTransparency = btnOpts.ImageTransparency or 0.2
+  
+local v484 = v466:AddTab({ Title = "Information", Icon = "info" })
+local v485 = v466:AddTab({ Title = "Farm", Icon = "home" })
+local v486 = v466:AddTab({ Title = "Fishing", Icon = "rbxassetid://127664059821666" })
+local v487 = v466:AddTab({ Title = "Quest/Items", Icon = "swords" })
+local v491 = v466:AddTab({ Title = "Raid/Fruits", Icon = "cherry" })
+local v489 = v466:AddTab({ Title = "Sea Event", Icon = "waves" })
+local v497 = v466:AddTab({ Title = "Stats", Icon = "Signal" })
+local v493 = v466:AddTab({ Title = "Teleport", Icon = "locate" })
+local v499 = v466:AddTab({ Title = "Status", Icon = "Scroll" })
+local v494 = v466:AddTab({ Title = "Visual", Icon = "user" })
+local v495 = v466:AddTab({ Title = "Shop", Icon = "shoppingCart" })
+local v496 = v466:AddTab({ Title = "Misc", Icon = "settings" })
 
-    local uic = Instance.new("UICorner")
-    uic.CornerRadius = corner.CornerRadius or UDim.new(0.25, 0)
-    uic.Parent = btn
+-- Apply legacy compatibility patches to all tabs
+for _, _t in ipairs({ v484, v485, v486, v487, v491, v489, v497, v493, v499, v494, v495, v496 }) do _patchTab(_t) end
 
-    -- drag
-    local dragging, dragInput, startPos, startBtnPos
-    btn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            startPos = input.Position
-            startBtnPos = btn.Position
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then dragging = false end
-            end)
-        end
-    end)
-    btn.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-    _UIS.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local d = input.Position - startPos
-            btn.Position = UDim2.new(startBtnPos.X.Scale, startBtnPos.X.Offset + d.X, startBtnPos.Y.Scale, startBtnPos.Y.Offset + d.Y)
-        end
-    end)
-
-    local moved = false
-    btn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            moved = false
-            local startP = input.Position
-            local conn
-            conn = _UIS.InputChanged:Connect(function(i)
-                if (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-                    if (i.Position - startP).Magnitude > 6 then moved = true end
-                end
-            end)
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    if conn then conn:Disconnect() end
-                    if not moved then pcall(function() self._f:Minimize() end) end
-                end
-            end)
-        end
-    end)
-end
-
--- Tab class
-local Tab = {}
-Tab.__index = Tab
-
-function Window:MakeTab(args)
-    -- args may be a table {"Name","icon"} or {Name=,Icon=}
-    local name, icon
-    if type(args) == "table" then
-        if args[1] then name, icon = args[1], args[2] end
-        name = args.Name or args.Title or name or "Tab"
-        icon = args.Icon or icon
-    else
-        name = tostring(args)
-    end
-    -- Map known string icons; pass others through (Fluent supports lucide names + rbxassetid)
-    local f = self._f:AddTab({ Title = name, Icon = icon })
-    return setmetatable({ _f = f, _win = self }, Tab)
-end
-
-local function _title(t) return t.Title or t.Name or "" end
-local function _desc(t)  return t.Description or t.Desc or t.Content or "" end
-
-function Tab:AddSection(args)
-    local name = (type(args) == "table") and (args[1] or args.Name or args.Title or "") or tostring(args)
-    return self._f:AddSection(name)
-end
-
-function Tab:AddParagraph(opts)
-    opts = opts or {}
-    local p = self._f:AddParagraph({ Title = _title(opts), Content = _desc(opts) })
-    -- Wrap to support :SetDesc
-    local wrap = {}
-    function wrap:SetDesc(text)
-        if p and p.SetDesc then p:SetDesc(text)
-        elseif p and p.SetContent then p:SetContent(text)
-        elseif p and p.SetValue then p:SetValue({ Title = _title(opts), Content = text })
-        end
-    end
-    function wrap:SetTitle(text)
-        if p and p.SetTitle then p:SetTitle(text) end
-    end
-    return wrap
-end
-
-function Tab:AddButton(opts)
-    opts = opts or {}
-    return self._f:AddButton({
-        Title       = _title(opts),
-        Description = _desc(opts),
-        Callback    = opts.Callback or function() end,
-    })
-end
-
-function Tab:AddToggle(opts)
-    opts = opts or {}
-    local flag = opts.Flag or ("Toggle_" .. _HS:GenerateGUID(false))
-    return self._f:AddToggle(flag, {
-        Title       = _title(opts),
-        Description = _desc(opts),
-        Default     = opts.Default and true or false,
-        Callback    = opts.Callback or function() end,
-    })
-end
-
-function Tab:AddSlider(opts)
-    opts = opts or {}
-    local flag = opts.Flag or ("Slider_" .. _HS:GenerateGUID(false))
-    local rounding = opts.Rounding
-    if rounding == nil then
-        local inc = opts.Increase or 1
-        if inc >= 1 then rounding = 0
-        else rounding = math.max(0, math.min(4, math.ceil(-math.log10(inc)))) end
-    end
-    return self._f:AddSlider(flag, {
-        Title    = _title(opts),
-        Description = _desc(opts),
-        Min      = opts.Min or 0,
-        Max      = opts.Max or 100,
-        Default  = opts.Default or opts.Min or 0,
-        Rounding = rounding,
-        Callback = opts.Callback or function() end,
-    })
-end
-
-function Tab:AddDropdown(opts)
-    opts = opts or {}
-    local flag = opts.Flag or ("Dropdown_" .. _HS:GenerateGUID(false))
-    local values = opts.Options or opts.Values or {}
-    local default
-    if opts.Multi then
-        default = opts.Default or {}
-    else
-        local d = opts.Default
-        if type(d) == "string" then
-            default = indexOf(values, d) or 1
-        elseif type(d) == "number" then
-            default = d
-        else
-            default = 1
-        end
-    end
-    return self._f:AddDropdown(flag, {
-        Title    = _title(opts),
-        Description = _desc(opts),
-        Values   = values,
-        Multi    = opts.Multi and true or false,
-        Default  = default,
-        Callback = opts.Callback or function() end,
-    })
-end
-
-function Tab:AddTextBox(opts)
-    opts = opts or {}
-    local flag = opts.Flag or ("Input_" .. _HS:GenerateGUID(false))
-    return self._f:AddInput(flag, {
-        Title       = _title(opts),
-        Description = _desc(opts),
-        Default     = opts.Default or "",
-        Placeholder = opts.PlaceholderText or opts.Placeholder or "",
-        Numeric     = opts.Numeric and true or false,
-        Finished    = opts.Finished ~= false,
-        Callback    = opts.Callback or function() end,
-    })
-end
-
-function Tab:AddDiscordInvite(opts)
-    opts = opts or {}
-    self._f:AddParagraph({
-        Title   = opts.Name or "Discord",
-        Content = (opts.Description or "") .. (opts.Invite and ("\nInvite: " .. opts.Invite) or ""),
-    })
-    if opts.Invite and opts.Invite ~= "" then
-        self._f:AddButton({
-            Title       = "Copy Discord Invite",
-            Description = opts.Invite,
-            Callback = function()
-                if setclipboard then
-                    pcall(setclipboard, opts.Invite)
-                    Fluent:Notify({ Title = "Celestia Hub", Content = "Discord invite copied!", Duration = 3 })
-                else
-                    Fluent:Notify({ Title = "Celestia Hub", Content = opts.Invite, Duration = 5 })
-                end
-            end,
-        })
-    end
-end
-
--- Keybind / Colorpicker (parity with original Fluent for completeness)
-function Tab:AddKeybind(opts)
-    opts = opts or {}
-    local flag = opts.Flag or ("Keybind_" .. _HS:GenerateGUID(false))
-    return self._f:AddKeybind(flag, {
-        Title           = _title(opts),
-        Mode            = opts.Mode or "Toggle",
-        Default         = opts.Default or "LeftControl",
-        ChangedCallback = opts.ChangedCallback or function() end,
-        Callback        = opts.Callback or function() end,
-    })
-end
-
-function Tab:AddColorpicker(opts)
-    opts = opts or {}
-    local flag = opts.Flag or ("Color_" .. _HS:GenerateGUID(false))
-    return self._f:AddColorpicker(flag, {
-        Title    = _title(opts),
-        Description = _desc(opts),
-        Default  = opts.Default or Color3.fromRGB(255, 255, 255),
-        Callback = opts.Callback or function() end,
-    })
-end
-
--- Build window via shim
-local v466 = vu32:MakeWindow({
-    Title      = "Celestia Hub",
-    SubTitle   = "By Real_NightSlayer ☑️",
-    SaveFolder = "CelestiaHub",
-})
-
-v466:AddMinimizeButton({
-    Button = { Image = "rbxassetid://96779554580445", BackgroundTransparency = 1 },
-    Size   = UDim2.new(0, 40, 0, 40),
-    Corner = { CornerRadius = UDim.new(0.5, 0) },
-})
-
-local v484 = v466:MakeTab({"Information", "info"})
-local v485 = v466:MakeTab({"Farm", "home"})
-local v486 = v466:MakeTab({"Fishing", "rbxassetid://127664059821666"})
-local v487 = v466:MakeTab({"Quest/Items", "swords"})
-local v491 = v466:MakeTab({"Raid/Fruits", "cherry"})
-local v489 = v466:MakeTab({"Sea Event", "waves"})
-local v497 = v466:MakeTab({"Stats", "Signal"})
-local v493 = v466:MakeTab({"Teleport", "locate"})
-local v499 = v466:MakeTab({"Status", "Scroll"})
-local v494 = v466:MakeTab({"Visual", "user"})
-local v495 = v466:MakeTab({"Shop", "shoppingCart"})
-local v496 = v466:MakeTab({"Misc", "settings"})
 
 v484:AddDiscordInvite({
     Name = "Night Slayer | Official Sever",
@@ -9493,51 +9344,51 @@ local _ = v494:AddSection({"Esp"})
 local ESP_SIZE_FILE = "esp_size_save.txt"
 
 if isfile(ESP_SIZE_FILE) then
-        _G.ESPSize = tonumber(readfile(ESP_SIZE_FILE)) or 24
+	_G.ESPSize = tonumber(readfile(ESP_SIZE_FILE)) or 24
 else
-        _G.ESPSize = 24
-        writefile(ESP_SIZE_FILE, "24")
+	_G.ESPSize = 24
+	writefile(ESP_SIZE_FILE, "24")
 end
 
 v494:AddSlider({
-        Name = "ESP Size",
-        Min = 10,
-        Max = 40,
-        Default = _G.ESPSize,
-        Callback = function(Value)
-                _G.ESPSize = Value
-                writefile(ESP_SIZE_FILE, tostring(Value))
+	Name = "ESP Size",
+	Min = 10,
+	Max = 40,
+	Default = _G.ESPSize,
+	Callback = function(Value)
+		_G.ESPSize = Value
+		writefile(ESP_SIZE_FILE, tostring(Value))
 
-                for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-                        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                                local hrp = player.Character.HumanoidRootPart
-                                local esp = hrp:FindFirstChild("PlayerESP")
+		for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+			if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+				local hrp = player.Character.HumanoidRootPart
+				local esp = hrp:FindFirstChild("PlayerESP")
 
-                                if esp then
-                                        for _, obj in pairs(esp:GetChildren()) do
-                                                if obj:IsA("TextLabel") then
-                                                        obj.TextSize = Value
-                                                end
-                                        end
-                                end
-                        end
-                end
-        end
+				if esp then
+					for _, obj in pairs(esp:GetChildren()) do
+						if obj:IsA("TextLabel") then
+							obj.TextSize = Value
+						end
+					end
+				end
+			end
+		end
+	end
 })
 
 for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                local hrp = player.Character.HumanoidRootPart
-                local esp = hrp:FindFirstChild("PlayerESP")
+	if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+		local hrp = player.Character.HumanoidRootPart
+		local esp = hrp:FindFirstChild("PlayerESP")
 
-                if esp then
-                        for _, obj in pairs(esp:GetChildren()) do
-                                if obj:IsA("TextLabel") then
-                                        obj.TextSize = _G.ESPSize
-                                end
-                        end
-                end
-        end
+		if esp then
+			for _, obj in pairs(esp:GetChildren()) do
+				if obj:IsA("TextLabel") then
+					obj.TextSize = _G.ESPSize
+				end
+			end
+		end
+	end
 end
 
 
@@ -9550,156 +9401,156 @@ local ESP_SAVE_FILE = "esp_players_save.txt"
 -- Estado salvo
 local ESPPlayer = false
 if isfile(ESP_SAVE_FILE) then
-        ESPPlayer = readfile(ESP_SAVE_FILE) == "true"
+	ESPPlayer = readfile(ESP_SAVE_FILE) == "true"
 else
-        writefile(ESP_SAVE_FILE, "false")
+	writefile(ESP_SAVE_FILE, "false")
 end
 
 local Connections = {}
 
 -- Remove ESP
 local function RemoveESP(player)
-        if player.Character then
-                local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-                if hrp then
-                        local esp = hrp:FindFirstChild("PlayerESP")
-                        if esp then
-                                esp:Destroy()
-                        end
-                end
-        end
+	if player.Character then
+		local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+		if hrp then
+			local esp = hrp:FindFirstChild("PlayerESP")
+			if esp then
+				esp:Destroy()
+			end
+		end
+	end
 
-        if Connections[player] then
-                Connections[player]:Disconnect()
-                Connections[player] = nil
-        end
+	if Connections[player] then
+		Connections[player]:Disconnect()
+		Connections[player] = nil
+	end
 end
 
 -- Criar ESP
 local function CreateESP(player)
-        if player == LocalPlayer then return end
-        if not ESPPlayer then return end
-        if not player.Character then return end
+	if player == LocalPlayer then return end
+	if not ESPPlayer then return end
+	if not player.Character then return end
 
-        local char = player.Character
-        local hrp = char:WaitForChild("HumanoidRootPart", 3)
-        local hum = char:WaitForChild("Humanoid", 3)
+	local char = player.Character
+	local hrp = char:WaitForChild("HumanoidRootPart", 3)
+	local hum = char:WaitForChild("Humanoid", 3)
 
-        if not hrp or not hum then return end
+	if not hrp or not hum then return end
 
-        RemoveESP(player)
+	RemoveESP(player)
 
-        local gui = Instance.new("BillboardGui")
-        gui.Name = "PlayerESP"
-        gui.Adornee = hrp
-        gui.Size = UDim2.new(0, 220, 0, 40)
-        gui.StudsOffset = Vector3.new(0, 3, 0)
-        gui.AlwaysOnTop = true
-        gui.MaxDistance = 999999
-        gui.LightInfluence = 0
-        gui.Parent = hrp
+	local gui = Instance.new("BillboardGui")
+	gui.Name = "PlayerESP"
+	gui.Adornee = hrp
+	gui.Size = UDim2.new(0, 220, 0, 40)
+	gui.StudsOffset = Vector3.new(0, 3, 0)
+	gui.AlwaysOnTop = true
+	gui.MaxDistance = 999999
+	gui.LightInfluence = 0
+	gui.Parent = hrp
 
-        local nameLabel = Instance.new("TextLabel")
-        nameLabel.BackgroundTransparency = 1
-        nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
-        nameLabel.Position = UDim2.new(0, 0, 0, 0)
-        nameLabel.RichText = true
+	local nameLabel = Instance.new("TextLabel")
+	nameLabel.BackgroundTransparency = 1
+	nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
+	nameLabel.Position = UDim2.new(0, 0, 0, 0)
+	nameLabel.RichText = true
     nameLabel.TextColor3 = Color3.fromRGB(210,210,210) 
-        nameLabel.TextStrokeTransparency = 0
-        nameLabel.TextSize = 24
-        nameLabel.Font = Enum.Font.SourceSans
-        nameLabel.TextXAlignment = Enum.TextXAlignment.Center
-        nameLabel.TextYAlignment = Enum.TextYAlignment.Center
-        nameLabel.Parent = gui
+	nameLabel.TextStrokeTransparency = 0
+	nameLabel.TextSize = 24
+	nameLabel.Font = Enum.Font.SourceSans
+	nameLabel.TextXAlignment = Enum.TextXAlignment.Center
+	nameLabel.TextYAlignment = Enum.TextYAlignment.Center
+	nameLabel.Parent = gui
 
-        local hpLabel = Instance.new("TextLabel")
-        hpLabel.BackgroundTransparency = 1
-        hpLabel.Size = UDim2.new(1, 0, 0.5, 0)
-        hpLabel.Position = UDim2.new(0, 0, 0.5, 0)
-        hpLabel.TextColor3 = Color3.fromRGB(0,255,0)
-        hpLabel.TextStrokeTransparency = 0
-        hpLabel.TextSize = 24
-        hpLabel.Font = Enum.Font.SourceSans
-        hpLabel.TextXAlignment = Enum.TextXAlignment.Center
-        hpLabel.TextYAlignment = Enum.TextYAlignment.Center
-        hpLabel.Parent = gui
+	local hpLabel = Instance.new("TextLabel")
+	hpLabel.BackgroundTransparency = 1
+	hpLabel.Size = UDim2.new(1, 0, 0.5, 0)
+	hpLabel.Position = UDim2.new(0, 0, 0.5, 0)
+	hpLabel.TextColor3 = Color3.fromRGB(0,255,0)
+	hpLabel.TextStrokeTransparency = 0
+	hpLabel.TextSize = 24
+	hpLabel.Font = Enum.Font.SourceSans
+	hpLabel.TextXAlignment = Enum.TextXAlignment.Center
+	hpLabel.TextYAlignment = Enum.TextYAlignment.Center
+	hpLabel.Parent = gui
 
-        Connections[player] = RunService.RenderStepped:Connect(function()
+	Connections[player] = RunService.RenderStepped:Connect(function()
 
-                if not ESPPlayer then
-                        RemoveESP(player)
-                        return
-                end
+		if not ESPPlayer then
+			RemoveESP(player)
+			return
+		end
 
-                if not player.Character or hum.Health <= 0 then
-                        RemoveESP(player)
-                        return
-                end
+		if not player.Character or hum.Health <= 0 then
+			RemoveESP(player)
+			return
+		end
 
-                local myChar = LocalPlayer.Character
-                if not myChar then return end
+		local myChar = LocalPlayer.Character
+		if not myChar then return end
 
-                local myHRP = myChar:FindFirstChild("HumanoidRootPart")
-                if not myHRP then return end
+		local myHRP = myChar:FindFirstChild("HumanoidRootPart")
+		if not myHRP then return end
 
-                local distance = math.floor(
-                        (myHRP.Position - hrp.Position).Magnitude
-                )
+		local distance = math.floor(
+			(myHRP.Position - hrp.Position).Magnitude
+		)
 
-        nameLabel.Text = "<font color='rgb(235,235,235)'>" .. player.Name .. "</font> [ "  ..  distance .. "m ]"
-                hpLabel.Text = "[" .. math.floor(hum.Health) .. "/" .. math.floor(hum.MaxHealth) .. "]"
-        end)
+    	nameLabel.Text = "<font color='rgb(235,235,235)'>" .. player.Name .. "</font> [ "  ..  distance .. "m ]"
+		hpLabel.Text = "[" .. math.floor(hum.Health) .. "/" .. math.floor(hum.MaxHealth) .. "]"
+	end)
 end
 
 -- Setup jogador (resolve spawn + respawn)
 local function SetupPlayer(player)
-        if player == LocalPlayer then return end
+	if player == LocalPlayer then return end
 
-        player.CharacterAdded:Connect(function()
-                if ESPPlayer then
-                        task.wait(0.2)
-                        CreateESP(player)
-                end
-        end)
+	player.CharacterAdded:Connect(function()
+		if ESPPlayer then
+			task.wait(0.2)
+			CreateESP(player)
+		end
+	end)
 
-        if player.Character then
-                task.wait(0.2)
-                CreateESP(player)
-        end
+	if player.Character then
+		task.wait(0.2)
+		CreateESP(player)
+	end
 end
 
 -- Aplicar para jogadores já no servidor
 for _,player in ipairs(Players:GetPlayers()) do
-        SetupPlayer(player)
+	SetupPlayer(player)
 end
 
 -- Jogadores novos
 Players.PlayerAdded:Connect(function(player)
-        SetupPlayer(player)
+	SetupPlayer(player)
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-        RemoveESP(player)
+	RemoveESP(player)
 end)
 
 -- Toggle da sua lib
 v494:AddToggle({
-        Title = "ESP Players",
-        Default = ESPPlayer,
-        Callback = function(v)
-                ESPPlayer = v
-                writefile(ESP_SAVE_FILE, tostring(v))
+	Title = "ESP Players",
+	Default = ESPPlayer,
+	Callback = function(v)
+		ESPPlayer = v
+		writefile(ESP_SAVE_FILE, tostring(v))
 
-                for _,player in ipairs(Players:GetPlayers()) do
-                        if player ~= LocalPlayer then
-                                if v then
-                                        CreateESP(player)
-                                else
-                                        RemoveESP(player)
-                                end
-                        end
-                end
-        end
+		for _,player in ipairs(Players:GetPlayers()) do
+			if player ~= LocalPlayer then
+				if v then
+					CreateESP(player)
+				else
+					RemoveESP(player)
+				end
+			end
+		end
+	end
 })
 v494:AddToggle({
     Title = "Esp Chest",
@@ -9875,13 +9726,13 @@ local LP = Players.LocalPlayer
 
 local SEA
 if game.PlaceId == 2753915549 or game.PlaceId == 85211729168715 then
-        SEA = 1
+	SEA = 1
 elseif game.PlaceId == 4442272183 or game.PlaceId == 79091703265657 then
-        SEA = 2
+	SEA = 2
 elseif game.PlaceId == 7449423635 or game.PlaceId == 100117331123089 then
-        SEA = 3
+	SEA = 3
 else
-        return
+	return
 end
 
 _G.BuyFly = false
@@ -9889,231 +9740,231 @@ local BV, BG
 local TargetPos = nil
 
 local NPCS = {
-        BlackLeg={[1]={Vector3.new(-988,13,3996)},[2]={Vector3.new(-4750.61, 35.08, -4846.33)},[3]={Vector3.new(-5043.64,371.35,-3183.40)}},
-        Electro={[1]={Vector3.new(-5382.27,14.15,-2150.34)},[2]={Vector3.new(-4863.81, 35.08, -4767.54)},[3]={Vector3.new(-4993.20,314.56,-3198.06)}},
-        FishmanKarate={[1]={Vector3.new(61584.35,18.85,988.89)},[2]={Vector3.new(-4960.04, 35.08, -4662.67)},[3]={Vector3.new(-5017.39,371.35,-3187.53)}},
-        Superhuman={[2]={Vector3.new(1378.05, 247.43, -5189.37)},[3]={Vector3.new(-4997.53,371.35,-3197.46)}},
-        DeathStep={[2]={Vector3.new(6360.04, 296.67, -6763.93)},[3]={Vector3.new(-4997.64,314.56,-3220.37)}},
-        SharkmanKarate={[2]={Vector3.new(-2602.40, 239.22, -10314.75)},[3]={Vector3.new(-4970.48,314.56,-3225.04)}},
-        ElectricClaw={[3]={Vector3.new(-10369.83,331.69,-10126.49)}},
-        DragonTalon={[3]={Vector3.new(5662.03,1211.32,858.60)}},
-        GodHuman={[3]={Vector3.new(-13775.56,334.66,-9877.67)}},
-        SanguineArt={[3]={Vector3.new(-16514.86,23.18,-190.84)}}
+	BlackLeg={[1]={Vector3.new(-988,13,3996)},[2]={Vector3.new(-4750.61, 35.08, -4846.33)},[3]={Vector3.new(-5043.64,371.35,-3183.40)}},
+	Electro={[1]={Vector3.new(-5382.27,14.15,-2150.34)},[2]={Vector3.new(-4863.81, 35.08, -4767.54)},[3]={Vector3.new(-4993.20,314.56,-3198.06)}},
+	FishmanKarate={[1]={Vector3.new(61584.35,18.85,988.89)},[2]={Vector3.new(-4960.04, 35.08, -4662.67)},[3]={Vector3.new(-5017.39,371.35,-3187.53)}},
+	Superhuman={[2]={Vector3.new(1378.05, 247.43, -5189.37)},[3]={Vector3.new(-4997.53,371.35,-3197.46)}},
+	DeathStep={[2]={Vector3.new(6360.04, 296.67, -6763.93)},[3]={Vector3.new(-4997.64,314.56,-3220.37)}},
+	SharkmanKarate={[2]={Vector3.new(-2602.40, 239.22, -10314.75)},[3]={Vector3.new(-4970.48,314.56,-3225.04)}},
+	ElectricClaw={[3]={Vector3.new(-10369.83,331.69,-10126.49)}},
+	DragonTalon={[3]={Vector3.new(5662.03,1211.32,858.60)}},
+	GodHuman={[3]={Vector3.new(-13775.56,334.66,-9877.67)}},
+	SanguineArt={[3]={Vector3.new(-16514.86,23.18,-190.84)}}
 }
 
 local function HRP()
-        return LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+	return LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
 end
 
 local LV, AO
 local TargetPos
 
 local function EnsureFly()
-        local hrp = HRP()
-        if not hrp then return end
+	local hrp = HRP()
+	if not hrp then return end
 
-        if not LV or LV.Parent ~= hrp then
-                if LV then LV:Destroy() end
-                LV = Instance.new("LinearVelocity")
-                LV.Attachment0 = hrp:FindFirstChildOfClass("Attachment") or Instance.new("Attachment", hrp)
-                LV.MaxForce = math.huge
-                LV.VectorVelocity = Vector3.zero
-                LV.Parent = hrp
-        end
+	if not LV or LV.Parent ~= hrp then
+		if LV then LV:Destroy() end
+		LV = Instance.new("LinearVelocity")
+		LV.Attachment0 = hrp:FindFirstChildOfClass("Attachment") or Instance.new("Attachment", hrp)
+		LV.MaxForce = math.huge
+		LV.VectorVelocity = Vector3.zero
+		LV.Parent = hrp
+	end
 
-        if not AO or AO.Parent ~= hrp then
-                if AO then AO:Destroy() end
-                AO = Instance.new("AlignOrientation")
-                AO.Attachment0 = hrp:FindFirstChildOfClass("Attachment")
-                AO.MaxTorque = math.huge
-                AO.Responsiveness = 200
-                AO.Parent = hrp
-        end
+	if not AO or AO.Parent ~= hrp then
+		if AO then AO:Destroy() end
+		AO = Instance.new("AlignOrientation")
+		AO.Attachment0 = hrp:FindFirstChildOfClass("Attachment")
+		AO.MaxTorque = math.huge
+		AO.Responsiveness = 200
+		AO.Parent = hrp
+	end
 end
 
 local function StopFly()
-        RunService:UnbindFromRenderStep("BuyFly")
-        if LV then LV:Destroy() LV=nil end
-        if AO then AO:Destroy() AO=nil end
-        TargetPos = nil
+	RunService:UnbindFromRenderStep("BuyFly")
+	if LV then LV:Destroy() LV=nil end
+	if AO then AO:Destroy() AO=nil end
+	TargetPos = nil
 end
 
 local function FlyTo(pos)
-        TargetPos = pos
+	TargetPos = pos
 
-        RunService:BindToRenderStep("BuyFly", Enum.RenderPriority.Character.Value + 1, function()
-                if not _G.BuyFly then StopFly() return end
+	RunService:BindToRenderStep("BuyFly", Enum.RenderPriority.Character.Value + 1, function()
+		if not _G.BuyFly then StopFly() return end
 
-                local hrp = HRP()
-                if not hrp then return end
+		local hrp = HRP()
+		if not hrp then return end
 
-                EnsureFly()
+		EnsureFly()
 
-                for _,v in ipairs(LP.Character:GetDescendants()) do
-                        if v:IsA("BasePart") then v.CanCollide = false end
-                end
+		for _,v in ipairs(LP.Character:GetDescendants()) do
+			if v:IsA("BasePart") then v.CanCollide = false end
+		end
 
-                local delta = TargetPos - hrp.Position
-                local dist = delta.Magnitude
+		local delta = TargetPos - hrp.Position
+		local dist = delta.Magnitude
 
-                if dist <= 3 then
-                        LV.VectorVelocity = Vector3.zero
-                        hrp.AssemblyLinearVelocity = Vector3.zero
-                        hrp.CFrame = CFrame.new(TargetPos)
-                        return
-                end
+		if dist <= 3 then
+			LV.VectorVelocity = Vector3.zero
+			hrp.AssemblyLinearVelocity = Vector3.zero
+			hrp.CFrame = CFrame.new(TargetPos)
+			return
+		end
 
-                local dir = delta.Unit
-                LV.VectorVelocity = dir * math.clamp(dist * 6, 120, 330)
-                AO.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + dir)
-        end)
+		local dir = delta.Unit
+		LV.VectorVelocity = dir * math.clamp(dist * 6, 120, 330)
+		AO.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + dir)
+	end)
 end
 
 local function Buy(style, remote)
-        task.spawn(function()
-                local pos = NPCS[style] and NPCS[style][SEA]
-                if not pos then return end
+	task.spawn(function()
+		local pos = NPCS[style] and NPCS[style][SEA]
+		if not pos then return end
 
-                FlyTo(pos[1])
+		FlyTo(pos[1])
 
-                repeat task.wait()
-                until (HRP() and (HRP().Position - pos[1]).Magnitude <= 4) or not _G.BuyFly
+		repeat task.wait()
+		until (HRP() and (HRP().Position - pos[1]).Magnitude <= 4) or not _G.BuyFly
 
-                if _G.BuyFly then
-                        ReplicatedStorage.Remotes.CommF_:InvokeServer(remote)
-                end
-        end)
+		if _G.BuyFly then
+			ReplicatedStorage.Remotes.CommF_:InvokeServer(remote)
+		end
+	end)
 end
 
 LP.CharacterAdded:Connect(function()
-        task.wait(0.4)
-        if _G.BuyFly and TargetPos then
-                FlyTo(TargetPos)
-        end
+	task.wait(0.4)
+	if _G.BuyFly and TargetPos then
+		FlyTo(TargetPos)
+	end
 end)
 local function StopAllBuy()
-        _G.BuyFly = false
-        StopFly()
+	_G.BuyFly = false
+	StopFly()
 end
 
 v495:AddToggle({
-        Title = "Buy Black Leg",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("BlackLeg","BuyBlackLeg")
-                end
-        end
+	Title = "Buy Black Leg",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("BlackLeg","BuyBlackLeg")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy Electro",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("Electro","BuyElectro")
-                end
-        end
+	Title = "Buy Electro",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("Electro","BuyElectro")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy Fishman Karate",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("FishmanKarate","BuyFishmanKarate")
-                end
-        end
+	Title = "Buy Fishman Karate",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("FishmanKarate","BuyFishmanKarate")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy Superhuman",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("Superhuman","BuySuperhuman")
-                end
-        end
+	Title = "Buy Superhuman",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("Superhuman","BuySuperhuman")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy Death Step",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("DeathStep","BuyDeathStep")
-                end
-        end
+	Title = "Buy Death Step",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("DeathStep","BuyDeathStep")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy Sharkman Karate",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("SharkmanKarate","BuySharkmanKarate")
-                end
-        end
+	Title = "Buy Sharkman Karate",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("SharkmanKarate","BuySharkmanKarate")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy Electric Claw",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("ElectricClaw","BuyElectricClaw")
-                end
-        end
+	Title = "Buy Electric Claw",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("ElectricClaw","BuyElectricClaw")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy Dragon Talon",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("DragonTalon","BuyDragonTalon")
-                end
-        end
+	Title = "Buy Dragon Talon",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("DragonTalon","BuyDragonTalon")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy God Human",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("GodHuman","BuyGodhuman")
-                end
-        end
+	Title = "Buy God Human",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("GodHuman","BuyGodhuman")
+		end
+	end
 })
 
 v495:AddToggle({
-        Title = "Buy Sanguine Art",
-        Value = false,
-        Callback = function(v)
-                StopAllBuy()
-                if v then
-                        _G.BuyFly = true
-                        Buy("SanguineArt","BuySanguineArt")
-                end
-        end
+	Title = "Buy Sanguine Art",
+	Value = false,
+	Callback = function(v)
+		StopAllBuy()
+		if v then
+			_G.BuyFly = true
+			Buy("SanguineArt","BuySanguineArt")
+		end
+	end
 })
 
 local _ = v495:AddSection({"Buy Sea Event Crafting"})
@@ -10766,111 +10617,111 @@ local TOGGLE_SAVE_FILE = "movement_toggle_save.txt"
 local MovementEnabled = false
 
 if isfile(TOGGLE_SAVE_FILE) then
-        MovementEnabled = readfile(TOGGLE_SAVE_FILE) == "true"
+	MovementEnabled = readfile(TOGGLE_SAVE_FILE) == "true"
 else
-        writefile(TOGGLE_SAVE_FILE, "false")
+	writefile(TOGGLE_SAVE_FILE, "false")
 end
 
 local WalkSpeedValue = 58
 local JumpValue = 58
 
 if isfile(SPEED_SAVE_FILE) then
-        WalkSpeedValue = tonumber(readfile(SPEED_SAVE_FILE)) or 58
+	WalkSpeedValue = tonumber(readfile(SPEED_SAVE_FILE)) or 58
 else
-        writefile(SPEED_SAVE_FILE, "58")
+	writefile(SPEED_SAVE_FILE, "58")
 end
 
 if isfile(JUMP_SAVE_FILE) then
-        JumpValue = tonumber(readfile(JUMP_SAVE_FILE)) or 58
+	JumpValue = tonumber(readfile(JUMP_SAVE_FILE)) or 58
 else
-        writefile(JUMP_SAVE_FILE, "58")
+	writefile(JUMP_SAVE_FILE, "58")
 end
 
 local function ApplyMovement(char)
-        local hum = char:WaitForChild("Humanoid",5)
-        if not hum then return end
+	local hum = char:WaitForChild("Humanoid",5)
+	if not hum then return end
 
-        if MovementEnabled then
-                hum.WalkSpeed = WalkSpeedValue
-                hum.JumpPower = JumpValue
-        end
+	if MovementEnabled then
+		hum.WalkSpeed = WalkSpeedValue
+		hum.JumpPower = JumpValue
+	end
 
-        hum:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-                if MovementEnabled then
-                        hum.WalkSpeed = WalkSpeedValue
-                end
-        end)
+	hum:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+		if MovementEnabled then
+			hum.WalkSpeed = WalkSpeedValue
+		end
+	end)
 
-        hum:GetPropertyChangedSignal("JumpPower"):Connect(function()
-                if MovementEnabled then
-                        hum.JumpPower = JumpValue
-                end
-        end)
+	hum:GetPropertyChangedSignal("JumpPower"):Connect(function()
+		if MovementEnabled then
+			hum.JumpPower = JumpValue
+		end
+	end)
 end
 
 LocalPlayer.CharacterAdded:Connect(function(char)
-        task.wait(0.2)
-        ApplyMovement(char)
+	task.wait(0.2)
+	ApplyMovement(char)
 end)
 
 if LocalPlayer.Character then
-        ApplyMovement(LocalPlayer.Character)
+	ApplyMovement(LocalPlayer.Character)
 end
 
 v496:AddToggle({
-        Title = "Enable WalkSpeed and Jump",
-        Default = MovementEnabled,
-        Callback = function(v)
-                MovementEnabled = v
-                writefile(TOGGLE_SAVE_FILE, tostring(v))
+	Title = "Enable WalkSpeed and Jump",
+	Default = MovementEnabled,
+	Callback = function(v)
+		MovementEnabled = v
+		writefile(TOGGLE_SAVE_FILE, tostring(v))
 
-                local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-                if hum then
-                        if v then
-                                hum.WalkSpeed = WalkSpeedValue
-                                hum.JumpPower = JumpValue
-                        else
-                                hum.WalkSpeed = 16
-                                hum.JumpPower = 50
-                        end
-                end
-        end
+		local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+		if hum then
+			if v then
+				hum.WalkSpeed = WalkSpeedValue
+				hum.JumpPower = JumpValue
+			else
+				hum.WalkSpeed = 16
+				hum.JumpPower = 50
+			end
+		end
+	end
 })
 
 v496:AddSlider({
-        Title = "Speed",
-        Min = 26,
-        Max = 300,
-        Default = WalkSpeedValue,
-        Callback = function(v)
-                WalkSpeedValue = v
-                writefile(SPEED_SAVE_FILE, tostring(v))
+	Title = "Speed",
+	Min = 26,
+	Max = 300,
+	Default = WalkSpeedValue,
+	Callback = function(v)
+		WalkSpeedValue = v
+		writefile(SPEED_SAVE_FILE, tostring(v))
 
-                if MovementEnabled then
-                        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-                        if hum then
-                                hum.WalkSpeed = v
-                        end
-                end
-        end
+		if MovementEnabled then
+			local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+			if hum then
+				hum.WalkSpeed = v
+			end
+		end
+	end
 })
 
 v496:AddSlider({
-        Title = "Jump",
-        Min = 50,
-        Max = 500,
-        Default = JumpValue,
-        Callback = function(v)
-                JumpValue = v
-                writefile(JUMP_SAVE_FILE, tostring(v))
+	Title = "Jump",
+	Min = 50,
+	Max = 500,
+	Default = JumpValue,
+	Callback = function(v)
+		JumpValue = v
+		writefile(JUMP_SAVE_FILE, tostring(v))
 
-                if MovementEnabled then
-                        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-                        if hum then
-                                hum.JumpPower = v
-                        end
-                end
-        end
+		if MovementEnabled then
+			local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+			if hum then
+				hum.JumpPower = v
+			end
+		end
+	end
 })
 
 v496:AddSection("Visual")
@@ -10879,48 +10730,48 @@ local FULLBRIGHT_SAVE_FILE = "fullbright_save.txt"
 
 -- Salvar valores originais
 local OriginalLighting = {
-        Ambient = Lighting.Ambient,
-        ColorShift_Bottom = Lighting.ColorShift_Bottom,
-        ColorShift_Top = Lighting.ColorShift_Top,
-        Brightness = Lighting.Brightness,
-        GlobalShadows = Lighting.GlobalShadows
+	Ambient = Lighting.Ambient,
+	ColorShift_Bottom = Lighting.ColorShift_Bottom,
+	ColorShift_Top = Lighting.ColorShift_Top,
+	Brightness = Lighting.Brightness,
+	GlobalShadows = Lighting.GlobalShadows
 }
 
 local function ApplyFullBright(state)
-        if state then
-                Lighting.Ambient = Color3.new(1, 1, 1)
-                Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
-                Lighting.ColorShift_Top = Color3.new(1, 1, 1)
-                Lighting.Brightness = 3
-                Lighting.GlobalShadows = false
-        else
-                -- Restaurar original
-                Lighting.Ambient = OriginalLighting.Ambient
-                Lighting.ColorShift_Bottom = OriginalLighting.ColorShift_Bottom
-                Lighting.ColorShift_Top = OriginalLighting.ColorShift_Top
-                Lighting.Brightness = OriginalLighting.Brightness
-                Lighting.GlobalShadows = OriginalLighting.GlobalShadows
-        end
+	if state then
+		Lighting.Ambient = Color3.new(1, 1, 1)
+		Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
+		Lighting.ColorShift_Top = Color3.new(1, 1, 1)
+		Lighting.Brightness = 3
+		Lighting.GlobalShadows = false
+	else
+		-- Restaurar original
+		Lighting.Ambient = OriginalLighting.Ambient
+		Lighting.ColorShift_Bottom = OriginalLighting.ColorShift_Bottom
+		Lighting.ColorShift_Top = OriginalLighting.ColorShift_Top
+		Lighting.Brightness = OriginalLighting.Brightness
+		Lighting.GlobalShadows = OriginalLighting.GlobalShadows
+	end
 end
 
 local FullBrightEnabled = false
 
 if isfile(FULLBRIGHT_SAVE_FILE) then
-        FullBrightEnabled = readfile(FULLBRIGHT_SAVE_FILE) == "true"
+	FullBrightEnabled = readfile(FULLBRIGHT_SAVE_FILE) == "true"
 else
-        writefile(FULLBRIGHT_SAVE_FILE, "false")
+	writefile(FULLBRIGHT_SAVE_FILE, "false")
 end
 
 ApplyFullBright(FullBrightEnabled)
 
 v496:AddToggle({
-        Title = "Full Bright",
-        Value = FullBrightEnabled,
-        Callback = function(Value)
-                FullBrightEnabled = Value
-                writefile(FULLBRIGHT_SAVE_FILE, tostring(Value))
-                ApplyFullBright(Value)
-        end
+	Title = "Full Bright",
+	Value = FullBrightEnabled,
+	Callback = function(Value)
+		FullBrightEnabled = Value
+		writefile(FULLBRIGHT_SAVE_FILE, tostring(Value))
+		ApplyFullBright(Value)
+	end
 })
 
 v496:AddButton({
@@ -10936,24 +10787,24 @@ end
 
 
 v496:AddButton({
-        Name = "FPS Boost",
-        Callback = function()
-                for _, v in ipairs(game:GetDescendants()) do
-                        if v:IsA("BasePart") then
-                                v.Material = Enum.Material.SmoothPlastic
-                                v.Reflectance = 0
-                        elseif v:IsA("Decal") or v:IsA("Texture") then
-                                v:Destroy()
-                        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-                                v.Enabled = false
-                        elseif v:IsA("Lighting") then
-                                v.GlobalShadows = false
-                                v.FogEnd = 1e10
-                                v.Brightness = 0
-                        end
-                end
-                setfpscap(60)
-        end
+	Name = "FPS Boost",
+	Callback = function()
+		for _, v in ipairs(game:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.Material = Enum.Material.SmoothPlastic
+				v.Reflectance = 0
+			elseif v:IsA("Decal") or v:IsA("Texture") then
+				v:Destroy()
+			elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+				v.Enabled = false
+			elseif v:IsA("Lighting") then
+				v.GlobalShadows = false
+				v.FogEnd = 1e10
+				v.Brightness = 0
+			end
+		end
+		setfpscap(60)
+	end
 })
 
 v496:AddSection("Others")
@@ -11151,14 +11002,14 @@ v496:AddButton({
 local RunService = game:GetService("RunService")
 
 v496:AddToggle({
-        Name = "White Screen",
-        Default = false,
-        Callback = function(Value)
+	Name = "White Screen",
+	Default = false,
+	Callback = function(Value)
 
-                _G.WhiteScreen = Value
-                RunService:Set3dRenderingEnabled(not Value)
+		_G.WhiteScreen = Value
+		RunService:Set3dRenderingEnabled(not Value)
 
-        end
+	end
 })
 
 print("--[[Hop Server If You Meet Game Admin]]--")
@@ -11195,29 +11046,23 @@ task.spawn(function()
     end
 end)
 
+return redzlib
 
---====================================================================--
---// CELESTIA HUB — Finalize Fluent Window (Settings / SaveManager)
---====================================================================--
-do
-    local _settings = v466:MakeTab({ "Settings", "settings" })
-    pcall(function()
-        SaveManager:SetLibrary(Fluent)
-        InterfaceManager:SetLibrary(Fluent)
-        SaveManager:IgnoreThemeSettings()
-        SaveManager:SetIgnoreIndexes({})
-        InterfaceManager:SetFolder("CelestiaHub")
-        SaveManager:SetFolder("CelestiaHub/BloxFruits")
-        InterfaceManager:BuildInterfaceSection(_settings._f)
-        SaveManager:BuildConfigSection(_settings._f)
-        SaveManager:LoadAutoloadConfig()
-    end)
 
-    pcall(function() _FluentWindow:SelectTab(1) end)
+  -- ====== Settings tab + SaveManager / InterfaceManager ======
+  do
+      local _SettingsTab = v466:AddTab({ Title = "Config", Icon = "settings" })
+      pcall(function() SaveManager:SetLibrary(Fluent) end)
+      pcall(function() InterfaceManager:SetLibrary(Fluent) end)
+      pcall(function() SaveManager:IgnoreThemeSettings() end)
+      pcall(function() SaveManager:SetIgnoreIndexes({}) end)
+      pcall(function() InterfaceManager:SetFolder("NightSlayerHub") end)
+      pcall(function() SaveManager:SetFolder("NightSlayerHub/BloxFruits") end)
+      pcall(function() InterfaceManager:BuildInterfaceSection(_SettingsTab) end)
+      pcall(function() SaveManager:BuildConfigSection(_SettingsTab) end)
+      pcall(function() SaveManager:LoadAutoloadConfig() end)
+  end
 
-    Fluent:Notify({
-        Title    = "Celestia Hub",
-        Content  = "Loaded successfully! Welcome, " .. _LP.DisplayName .. ".",
-        Duration = 5,
-    })
-end
+  v466:SelectTab(1)
+  Fluent:Notify({ Title = "Night Slayer Hub", Content = "UI converted to Fluent. Loaded successfully!", Duration = 5 })
+  
