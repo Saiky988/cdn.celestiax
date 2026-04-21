@@ -3737,16 +3737,10 @@ Options          = Fluent.Options
 
 v466 = nil
 do
-    local UIS = game:GetService("UserInputService")
-    local HS  = game:GetService("HttpService")
-    local LP  = game:GetService("Players").LocalPlayer
-    local TargetGui = (gethui and gethui())
-        or (pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui"))
-        or LP:WaitForChild("PlayerGui")
-
+    local LP = game:GetService("Players").LocalPlayer
     v466 = Fluent:CreateWindow({
-        Title = "Night Slayer Hub [V7]",
-        SubTitle = "By Real_NightSlayer (Fluent UI)",
+        Title = "Celestia Hub",
+        SubTitle = "By Real_Kyous",
         Searchable = true,
         TabWidth = 160,
         Size = UDim2.fromOffset(560, 400),
@@ -3755,54 +3749,72 @@ do
         MinimizeKey = Enum.KeyCode.LeftControl,
         UserInfo = true,
         UserInfoTitle = LP.DisplayName,
-        UserInfoSubtitle = "Night Slayer",
+        UserInfoSubtitle = "Developer",
         UserInfoSubtitleColor = Color3.fromRGB(71, 123, 255),
     })
+end
+local Window = v466
+local CoreGui = game:GetService("CoreGui")
 
-    -- Mobile Minimize Button (draggable) -- preserved from redz behavior
-    local screenGui      = Instance.new("ScreenGui")
+--// Mobile Minimize Button
+do
+    local screenGui = Instance.new("ScreenGui")
     local minimizeButton = Instance.new("ImageButton")
-    local buttonCorner   = Instance.new("UICorner")
-    screenGui.Name = HS:GenerateGUID(false)
-    screenGui.Parent = TargetGui
+    local buttonCorner = Instance.new("UICorner")
+
+    screenGui.Name = "MobileMinimize"
+    screenGui.Parent = CoreGui
     screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
     minimizeButton.Parent = screenGui
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     minimizeButton.BackgroundTransparency = 1
     minimizeButton.BorderSizePixel = 0
-    minimizeButton.Position = UDim2.new(0, 60, 0, 50)
-    minimizeButton.Size     = UDim2.new(0, 48, 0, 48)
-    minimizeButton.Image    = "rbxassetid://96779554580445"
-    minimizeButton.ImageTransparency = 0
-    buttonCorner.CornerRadius = UDim.new(0.5, 0)
+    minimizeButton.Position = UDim2.new(0, 584, 0, 50)
+    minimizeButton.Size = UDim2.new(0, 48, 0, 48)
+    minimizeButton.Image = "rbxassetid://94614883113293"
+    minimizeButton.ImageTransparency = 0.3
+
+    buttonCorner.CornerRadius = UDim.new(0.25, 0)
     buttonCorner.Parent = minimizeButton
 
     local dragging, dragInput, touchPos, buttonPos
+
     minimizeButton.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1
-            or input.UserInputType == Enum.UserInputType.Touch then
-            dragging  = true
-            touchPos  = input.Position
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            touchPos = input.Position
             buttonPos = minimizeButton.Position
+
             input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
             end)
         end
     end)
+
     minimizeButton.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement
-            or input.UserInputType == Enum.UserInputType.Touch then
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
     end)
-    UIS.InputChanged:Connect(function(input)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             local delta = input.Position - touchPos
             minimizeButton.Position = UDim2.new(
-                buttonPos.X.Scale, buttonPos.X.Offset + delta.X,
-                buttonPos.Y.Scale, buttonPos.Y.Offset + delta.Y)
+                buttonPos.X.Scale,
+                buttonPos.X.Offset + delta.X,
+                buttonPos.Y.Scale,
+                buttonPos.Y.Offset + delta.Y
+            )
         end
     end)
-    minimizeButton.MouseButton1Click:Connect(function() v466:Minimize() end)
+
+    minimizeButton.MouseButton1Click:Connect(function()
+        Window:Minimize()
+    end)
 end
 
 local v484 = v466:AddTab({ Title = "Information", Icon = "info" })
@@ -9999,15 +10011,15 @@ SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
 SaveManager:IgnoreThemeSettings()
 SaveManager:SetIgnoreIndexes({})
-InterfaceManager:SetFolder("NightSlayerHub")
-SaveManager:SetFolder("NightSlayerHub/BloxFruits")
+InterfaceManager:SetFolder("CelestiaHub")
+SaveManager:SetFolder("CelestiaHub/BloxFruits")
 InterfaceManager:BuildInterfaceSection(_SettingsTab)
 SaveManager:BuildConfigSection(_SettingsTab)
 SaveManager:LoadAutoloadConfig()
 
 v466:SelectTab(1)
 Fluent:Notify({
-    Title = "Night Slayer Hub",
-    Content = "Loaded successfully (Fluent UI)",
+    Title = "Celestia Hub",
+    Content = "Loaded successfully",
     Duration = 5,
 })
