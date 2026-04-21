@@ -3728,57 +3728,60 @@ function CheckItemBPCRBPCR(v463)
     end
 end
 -- ===== Fluent UI bootstrap (converted from redz) =====
-local UserInputService = game:GetService("UserInputService")
-local HttpService      = game:GetService("HttpService")
-local Players_F        = game:GetService("Players")
-local LocalPlayer_F    = Players_F.LocalPlayer
+-- Globals on purpose: avoids exhausting Luau's per-function local register
+-- budget in this very large main chunk.
+Fluent           = loadstring(game:HttpGet("https://raw.githubusercontent.com/discoart/FluentPlus/refs/heads/main/Beta.lua", true))()
+SaveManager      = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+Options          = Fluent.Options
 
-local TargetGui = (gethui and gethui())
-    or (pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui"))
-    or LocalPlayer_F:WaitForChild("PlayerGui")
-
-local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/discoart/FluentPlus/refs/heads/main/Beta.lua", true))()
-local SaveManager      = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
-local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
-local Options = Fluent.Options
-
-local v466 = Fluent:CreateWindow({
-    Title = "Night Slayer Hub [V7]",
-    SubTitle = "By Real_NightSlayer (Fluent UI)",
-    Searchable = true,
-    TabWidth = 160,
-    Size = UDim2.fromOffset(560, 400),
-    Acrylic = true,
-    Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.LeftControl,
-    UserInfo = true,
-    UserInfoTitle = LocalPlayer_F.DisplayName,
-    UserInfoSubtitle = "Night Slayer",
-    UserInfoSubtitleColor = Color3.fromRGB(71, 123, 255),
-})
-
--- Mobile Minimize Button (draggable) -- preserved from redz behavior
+v466 = nil
 do
-    local screenGui = Instance.new("ScreenGui")
+    local UIS = game:GetService("UserInputService")
+    local HS  = game:GetService("HttpService")
+    local LP  = game:GetService("Players").LocalPlayer
+    local TargetGui = (gethui and gethui())
+        or (pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui"))
+        or LP:WaitForChild("PlayerGui")
+
+    v466 = Fluent:CreateWindow({
+        Title = "Night Slayer Hub [V7]",
+        SubTitle = "By Real_NightSlayer (Fluent UI)",
+        Searchable = true,
+        TabWidth = 160,
+        Size = UDim2.fromOffset(560, 400),
+        Acrylic = true,
+        Theme = "Dark",
+        MinimizeKey = Enum.KeyCode.LeftControl,
+        UserInfo = true,
+        UserInfoTitle = LP.DisplayName,
+        UserInfoSubtitle = "Night Slayer",
+        UserInfoSubtitleColor = Color3.fromRGB(71, 123, 255),
+    })
+
+    -- Mobile Minimize Button (draggable) -- preserved from redz behavior
+    local screenGui      = Instance.new("ScreenGui")
     local minimizeButton = Instance.new("ImageButton")
-    local buttonCorner = Instance.new("UICorner")
-    screenGui.Name = HttpService:GenerateGUID(false)
+    local buttonCorner   = Instance.new("UICorner")
+    screenGui.Name = HS:GenerateGUID(false)
     screenGui.Parent = TargetGui
     screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     minimizeButton.Parent = screenGui
     minimizeButton.BackgroundTransparency = 1
     minimizeButton.BorderSizePixel = 0
     minimizeButton.Position = UDim2.new(0, 60, 0, 50)
-    minimizeButton.Size = UDim2.new(0, 48, 0, 48)
-    minimizeButton.Image = "rbxassetid://96779554580445"
+    minimizeButton.Size     = UDim2.new(0, 48, 0, 48)
+    minimizeButton.Image    = "rbxassetid://96779554580445"
     minimizeButton.ImageTransparency = 0
     buttonCorner.CornerRadius = UDim.new(0.5, 0)
     buttonCorner.Parent = minimizeButton
+
     local dragging, dragInput, touchPos, buttonPos
     minimizeButton.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            touchPos = input.Position
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
+            dragging  = true
+            touchPos  = input.Position
             buttonPos = minimizeButton.Position
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then dragging = false end
@@ -3786,12 +3789,17 @@ do
         end
     end)
     minimizeButton.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+        if input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
     end)
-    UserInputService.InputChanged:Connect(function(input)
+    UIS.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             local delta = input.Position - touchPos
-            minimizeButton.Position = UDim2.new(buttonPos.X.Scale, buttonPos.X.Offset + delta.X, buttonPos.Y.Scale, buttonPos.Y.Offset + delta.Y)
+            minimizeButton.Position = UDim2.new(
+                buttonPos.X.Scale, buttonPos.X.Offset + delta.X,
+                buttonPos.Y.Scale, buttonPos.Y.Offset + delta.Y)
         end
     end)
     minimizeButton.MouseButton1Click:Connect(function() v466:Minimize() end)
@@ -8598,7 +8606,21 @@ v494:AddSlider("Slider_110", { Title = "ESP Size", Description = "", Min = 10, M
 		_G.ESPSize = Value
 		writefile(ESP_SIZE_FILE, tostring(Value))
 
-		for _ })
+		for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+			if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+				local hrp = player.Character.HumanoidRootPart
+				local esp = hrp:FindFirstChild("PlayerESP")
+
+				if esp then
+					for _, obj in pairs(esp:GetChildren()) do
+						if obj:IsA("TextLabel") then
+							obj.TextSize = Value
+						end
+					end
+				end
+			end
+		end
+	end })
 
 for _, player in pairs(game:GetService("Players"):GetPlayers()) do
 	if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
@@ -8762,7 +8784,16 @@ v494:AddToggle("Toggle_111", { Title = "ESP Players", Description = "", Default 
 		ESPPlayer = v
 		writefile(ESP_SAVE_FILE, tostring(v))
 
-		for _ })
+		for _,player in ipairs(Players:GetPlayers()) do
+			if player ~= LocalPlayer then
+				if v then
+					CreateESP(player)
+				else
+					RemoveESP(player)
+				end
+			end
+		end
+	end })
 v494:AddToggle("Toggle_112", { Title = "Esp Chest", Description = "", Default = false, Callback = function(v1147)
         _G.ChestESP = v1147
         if not _G.ChestESP then
@@ -8870,7 +8901,15 @@ end
 v494:AddToggle("Toggle_114", { Title = "Esp Berry", Description = "", Default = false, Callback = function(v1149)
         Berry = v1149
         if not Berry then
-            for _ })
+            for _, v1151 in pairs(game:GetService("CollectionService"):GetTagged("BerryBush")) do
+                if v1151.Parent:FindFirstChild("BerryESP") then
+                    v1151.Parent.BerryESP:Destroy()
+                end
+            end
+        else
+            UpdateBerriesESP()
+        end
+    end })
 
     v494:AddSection("Visual")
 local vu14 = game.Players.LocalPlayer
@@ -9718,7 +9757,22 @@ end })
 
 
 v496:AddButton({ Title = "FPS Boost", Description = "", Callback = function()
-		for _ })
+		for _, v in ipairs(game:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.Material = Enum.Material.SmoothPlastic
+				v.Reflectance = 0
+			elseif v:IsA("Decal") or v:IsA("Texture") then
+				v:Destroy()
+			elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+				v.Enabled = false
+			elseif v:IsA("Lighting") then
+				v.GlobalShadows = false
+				v.FogEnd = 1e10
+				v.Brightness = 0
+			end
+		end
+		setfpscap(60)
+	end })
 
 v496:AddSection("Others")
 
@@ -9883,7 +9937,17 @@ local v1218 = {
     "THEGREATACE"
 }
 v496:AddButton({ Title = "Codes", Description = "", Callback = function()
-        for _ })
+        for _, v1220 in ipairs(v1218) do
+            local v1221 = {v1220}
+            do
+                local l_v1221_0 = v1221
+                pcall(function()
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Redeem"):InvokeServer(unpack(l_v1221_0))
+                end)
+                task.wait(0.1)
+            end
+        end
+    end })
 local RunService = game:GetService("RunService")
 
 v496:AddToggle("Toggle_140", { Title = "White Screen", Description = "", Default = false, Callback = function(Value)
