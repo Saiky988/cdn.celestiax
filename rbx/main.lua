@@ -3758,7 +3758,6 @@ end
       UserInfoSubtitle = "Player",
   })
 
-  -- Compatibility shims so any leftover original-library calls don't crash
   local vu32 = setmetatable({}, {__index = function() return function() end end})
   function vu32:SetScale(_) end
   function vu32:Notify(opts)
@@ -3773,7 +3772,6 @@ end
   local v466 = Window
   function v466:MakeNotification(opts) vu32:MakeNotification(opts) end
 
-  -- Mobile floating draggable minimize button
   do
       local screenGui = Instance.new("ScreenGui")
       screenGui.Name = HttpService:GenerateGUID(false)
@@ -9320,7 +9318,21 @@ v494:AddSlider("ESPSize_110", {
 		_G.ESPSize = Value
 		writefile(ESP_SIZE_FILE, tostring(Value))
 
-		for _,
+		for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+			if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+				local hrp = player.Character.HumanoidRootPart
+				local esp = hrp:FindFirstChild("PlayerESP")
+
+				if esp then
+					for _, obj in pairs(esp:GetChildren()) do
+						if obj:IsA("TextLabel") then
+							obj.TextSize = Value
+						end
+					end
+				end
+			end
+		end
+	end,
 })
 
 for _, player in pairs(game:GetService("Players"):GetPlayers()) do
@@ -9488,7 +9500,16 @@ v494:AddToggle("ESPPlayers_111", {
 		ESPPlayer = v
 		writefile(ESP_SAVE_FILE, tostring(v))
 
-		for _,
+		for _,player in ipairs(Players:GetPlayers()) do
+			if player ~= LocalPlayer then
+				if v then
+					CreateESP(player)
+				else
+					RemoveESP(player)
+				end
+			end
+		end
+	end,
 })
 v494:AddToggle("EspChest_112", {
     Title = "Esp Chest",
@@ -9608,7 +9629,15 @@ v494:AddToggle("EspBerry_114", {
     Callback = function(v1149)
         Berry = v1149
         if not Berry then
-            for _,
+            for _, v1151 in pairs(game:GetService("CollectionService"):GetTagged("BerryBush")) do
+                if v1151.Parent:FindFirstChild("BerryESP") then
+                    v1151.Parent.BerryESP:Destroy()
+                end
+            end
+        else
+            UpdateBerriesESP()
+        end
+    end,
 })
 
     v494:AddSection("Visual")
@@ -10704,7 +10733,22 @@ end,
 v496:AddButton({
     Title = "FPS Boost",
     Callback = function()
-		for _,
+		for _, v in ipairs(game:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.Material = Enum.Material.SmoothPlastic
+				v.Reflectance = 0
+			elseif v:IsA("Decal") or v:IsA("Texture") then
+				v:Destroy()
+			elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+				v.Enabled = false
+			elseif v:IsA("Lighting") then
+				v.GlobalShadows = false
+				v.FogEnd = 1e10
+				v.Brightness = 0
+			end
+		end
+		setfpscap(60)
+	end,
 })
 
 v496:AddSection("Others")
@@ -10895,7 +10939,17 @@ v496:AddButton({
     Title = "Codes",
     Description = "",
     Callback = function()
-        for _,
+        for _, v1220 in ipairs(v1218) do
+            local v1221 = {v1220}
+            do
+                local l_v1221_0 = v1221
+                pcall(function()
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Redeem"):InvokeServer(unpack(l_v1221_0))
+                end)
+                task.wait(0.1)
+            end
+        end
+    end,
 })
 local RunService = game:GetService("RunService")
 
