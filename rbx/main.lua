@@ -4038,7 +4038,7 @@ spawn(function()
               end                
                 if currentLevel >= 2600 and World3 and IsInSubmerged() then
                     CheckQuestNew()
-                    
+
                     local questGui = LocalPlayer.PlayerGui.Main.Quest
                     if not questGui.Visible then
                         StartBring = false
@@ -4071,7 +4071,7 @@ spawn(function()
                                     until not _G.AutoFarm or mob.Humanoid.Health <= 0 or not mob.Parent or not questGui.Visible
                                 end
                             end
-                            
+
                             if not game:GetService("Workspace").Enemies:FindFirstChild(MonNew) then
                                 TweenTo(CFrameMonNew)
                                 StartBring = false
@@ -8408,21 +8408,21 @@ local function DistributePoints()
         local player = game.Players.LocalPlayer
         local statsFolder = player:FindFirstChild("Data")
         if not statsFolder then continue end
-        
+
         local points = statsFolder:FindFirstChild("Points")
         if not points or points.Value <= 0 then continue end
-        
+
         local EnabledStats = {}
         for stat, enabled in pairs(StatsSelect) do
             if enabled then
                 table.insert(EnabledStats, stat)
             end
         end
-        
+
         if #EnabledStats > 0 then
             local amountEach = math.floor(PointsPerTick / #EnabledStats)
             if amountEach < 1 then amountEach = 1 end
-            
+
             for _, stat in ipairs(EnabledStats) do
                 AddPoint(stat, amountEach)
             end
@@ -8608,45 +8608,45 @@ local _ = v494:AddSection("Esp")
 local ESP_SIZE_FILE = "esp_size_save.txt"
 
 if isfile(ESP_SIZE_FILE) then
-	_G.ESPSize = tonumber(readfile(ESP_SIZE_FILE)) or 24
+    _G.ESPSize = tonumber(readfile(ESP_SIZE_FILE)) or 24
 else
-	_G.ESPSize = 24
-	writefile(ESP_SIZE_FILE, "24")
+    _G.ESPSize = 24
+    writefile(ESP_SIZE_FILE, "24")
 end
 
 v494:AddSlider("Slider_110", { Title = "ESP Size", Description = "", Min = 10, Max = 40, Default = _G.ESPSize, Rounding = 0, Callback = function(Value)
-		_G.ESPSize = Value
-		writefile(ESP_SIZE_FILE, tostring(Value))
+        _G.ESPSize = Value
+        writefile(ESP_SIZE_FILE, tostring(Value))
 
-		for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-			if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-				local hrp = player.Character.HumanoidRootPart
-				local esp = hrp:FindFirstChild("PlayerESP")
+        for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local hrp = player.Character.HumanoidRootPart
+                local esp = hrp:FindFirstChild("PlayerESP")
 
-				if esp then
-					for _, obj in pairs(esp:GetChildren()) do
-						if obj:IsA("TextLabel") then
-							obj.TextSize = Value
-						end
-					end
-				end
-			end
-		end
-	end })
+                if esp then
+                    for _, obj in pairs(esp:GetChildren()) do
+                        if obj:IsA("TextLabel") then
+                            obj.TextSize = Value
+                        end
+                    end
+                end
+            end
+        end
+    end })
 
 for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-	if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-		local hrp = player.Character.HumanoidRootPart
-		local esp = hrp:FindFirstChild("PlayerESP")
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = player.Character.HumanoidRootPart
+        local esp = hrp:FindFirstChild("PlayerESP")
 
-		if esp then
-			for _, obj in pairs(esp:GetChildren()) do
-				if obj:IsA("TextLabel") then
-					obj.TextSize = _G.ESPSize
-				end
-			end
-		end
-	end
+        if esp then
+            for _, obj in pairs(esp:GetChildren()) do
+                if obj:IsA("TextLabel") then
+                    obj.TextSize = _G.ESPSize
+                end
+            end
+        end
+    end
 end
 
 
@@ -8659,153 +8659,153 @@ local ESP_SAVE_FILE = "esp_players_save.txt"
 -- Estado salvo
 local ESPPlayer = false
 if isfile(ESP_SAVE_FILE) then
-	ESPPlayer = readfile(ESP_SAVE_FILE) == "true"
+    ESPPlayer = readfile(ESP_SAVE_FILE) == "true"
 else
-	writefile(ESP_SAVE_FILE, "false")
+    writefile(ESP_SAVE_FILE, "false")
 end
 
 local Connections = {}
 
 -- Remove ESP
 local function RemoveESP(player)
-	if player.Character then
-		local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-		if hrp then
-			local esp = hrp:FindFirstChild("PlayerESP")
-			if esp then
-				esp:Destroy()
-			end
-		end
-	end
+    if player.Character then
+        local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            local esp = hrp:FindFirstChild("PlayerESP")
+            if esp then
+                esp:Destroy()
+            end
+        end
+    end
 
-	if Connections[player] then
-		Connections[player]:Disconnect()
-		Connections[player] = nil
-	end
+    if Connections[player] then
+        Connections[player]:Disconnect()
+        Connections[player] = nil
+    end
 end
 
 -- Criar ESP
 local function CreateESP(player)
-	if player == LocalPlayer then return end
-	if not ESPPlayer then return end
-	if not player.Character then return end
+    if player == LocalPlayer then return end
+    if not ESPPlayer then return end
+    if not player.Character then return end
 
-	local char = player.Character
-	local hrp = char:WaitForChild("HumanoidRootPart", 3)
-	local hum = char:WaitForChild("Humanoid", 3)
+    local char = player.Character
+    local hrp = char:WaitForChild("HumanoidRootPart", 3)
+    local hum = char:WaitForChild("Humanoid", 3)
 
-	if not hrp or not hum then return end
+    if not hrp or not hum then return end
 
-	RemoveESP(player)
+    RemoveESP(player)
 
-	local gui = Instance.new("BillboardGui")
-	gui.Name = "PlayerESP"
-	gui.Adornee = hrp
-	gui.Size = UDim2.new(0, 220, 0, 40)
-	gui.StudsOffset = Vector3.new(0, 3, 0)
-	gui.AlwaysOnTop = true
-	gui.MaxDistance = 999999
-	gui.LightInfluence = 0
-	gui.Parent = hrp
+    local gui = Instance.new("BillboardGui")
+    gui.Name = "PlayerESP"
+    gui.Adornee = hrp
+    gui.Size = UDim2.new(0, 220, 0, 40)
+    gui.StudsOffset = Vector3.new(0, 3, 0)
+    gui.AlwaysOnTop = true
+    gui.MaxDistance = 999999
+    gui.LightInfluence = 0
+    gui.Parent = hrp
 
-	local nameLabel = Instance.new("TextLabel")
-	nameLabel.BackgroundTransparency = 1
-	nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
-	nameLabel.Position = UDim2.new(0, 0, 0, 0)
-	nameLabel.RichText = true
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    nameLabel.Position = UDim2.new(0, 0, 0, 0)
+    nameLabel.RichText = true
     nameLabel.TextColor3 = Color3.fromRGB(210,210,210) 
-	nameLabel.TextStrokeTransparency = 0
-	nameLabel.TextSize = 24
-	nameLabel.Font = Enum.Font.SourceSans
-	nameLabel.TextXAlignment = Enum.TextXAlignment.Center
-	nameLabel.TextYAlignment = Enum.TextYAlignment.Center
-	nameLabel.Parent = gui
+    nameLabel.TextStrokeTransparency = 0
+    nameLabel.TextSize = 24
+    nameLabel.Font = Enum.Font.SourceSans
+    nameLabel.TextXAlignment = Enum.TextXAlignment.Center
+    nameLabel.TextYAlignment = Enum.TextYAlignment.Center
+    nameLabel.Parent = gui
 
-	local hpLabel = Instance.new("TextLabel")
-	hpLabel.BackgroundTransparency = 1
-	hpLabel.Size = UDim2.new(1, 0, 0.5, 0)
-	hpLabel.Position = UDim2.new(0, 0, 0.5, 0)
-	hpLabel.TextColor3 = Color3.fromRGB(0,255,0)
-	hpLabel.TextStrokeTransparency = 0
-	hpLabel.TextSize = 24
-	hpLabel.Font = Enum.Font.SourceSans
-	hpLabel.TextXAlignment = Enum.TextXAlignment.Center
-	hpLabel.TextYAlignment = Enum.TextYAlignment.Center
-	hpLabel.Parent = gui
+    local hpLabel = Instance.new("TextLabel")
+    hpLabel.BackgroundTransparency = 1
+    hpLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    hpLabel.Position = UDim2.new(0, 0, 0.5, 0)
+    hpLabel.TextColor3 = Color3.fromRGB(0,255,0)
+    hpLabel.TextStrokeTransparency = 0
+    hpLabel.TextSize = 24
+    hpLabel.Font = Enum.Font.SourceSans
+    hpLabel.TextXAlignment = Enum.TextXAlignment.Center
+    hpLabel.TextYAlignment = Enum.TextYAlignment.Center
+    hpLabel.Parent = gui
 
-	Connections[player] = RunService.RenderStepped:Connect(function()
+    Connections[player] = RunService.RenderStepped:Connect(function()
 
-		if not ESPPlayer then
-			RemoveESP(player)
-			return
-		end
+        if not ESPPlayer then
+            RemoveESP(player)
+            return
+        end
 
-		if not player.Character or hum.Health <= 0 then
-			RemoveESP(player)
-			return
-		end
+        if not player.Character or hum.Health <= 0 then
+            RemoveESP(player)
+            return
+        end
 
-		local myChar = LocalPlayer.Character
-		if not myChar then return end
+        local myChar = LocalPlayer.Character
+        if not myChar then return end
 
-		local myHRP = myChar:FindFirstChild("HumanoidRootPart")
-		if not myHRP then return end
+        local myHRP = myChar:FindFirstChild("HumanoidRootPart")
+        if not myHRP then return end
 
-		local distance = math.floor(
-			(myHRP.Position - hrp.Position).Magnitude
-		)
+        local distance = math.floor(
+            (myHRP.Position - hrp.Position).Magnitude
+        )
 
-    	nameLabel.Text = "<font color='rgb(235,235,235)'>" .. player.Name .. "</font> [ "  ..  distance .. "m ]"
-		hpLabel.Text = "[" .. math.floor(hum.Health) .. "/" .. math.floor(hum.MaxHealth) .. "]"
-	end)
+        nameLabel.Text = "<font color='rgb(235,235,235)'>" .. player.Name .. "</font> [ "  ..  distance .. "m ]"
+        hpLabel.Text = "[" .. math.floor(hum.Health) .. "/" .. math.floor(hum.MaxHealth) .. "]"
+    end)
 end
 
 -- Setup jogador (resolve spawn + respawn)
 local function SetupPlayer(player)
-	if player == LocalPlayer then return end
+    if player == LocalPlayer then return end
 
-	player.CharacterAdded:Connect(function()
-		if ESPPlayer then
-			task.wait(0.2)
-			CreateESP(player)
-		end
-	end)
+    player.CharacterAdded:Connect(function()
+        if ESPPlayer then
+            task.wait(0.2)
+            CreateESP(player)
+        end
+    end)
 
-	if player.Character then
-		task.wait(0.2)
-		CreateESP(player)
-	end
+    if player.Character then
+        task.wait(0.2)
+        CreateESP(player)
+    end
 end
 
 -- Aplicar para jogadores já no servidor
 for _,player in ipairs(Players:GetPlayers()) do
-	SetupPlayer(player)
+    SetupPlayer(player)
 end
 
 -- Jogadores novos
 Players.PlayerAdded:Connect(function(player)
-	SetupPlayer(player)
+    SetupPlayer(player)
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-	RemoveESP(player)
+    RemoveESP(player)
 end)
 
 -- Toggle da sua lib
 v494:AddToggle("Toggle_111", { Title = "ESP Players", Description = "", Default = ESPPlayer, Callback = function(v)
-		ESPPlayer = v
-		writefile(ESP_SAVE_FILE, tostring(v))
+        ESPPlayer = v
+        writefile(ESP_SAVE_FILE, tostring(v))
 
-		for _,player in ipairs(Players:GetPlayers()) do
-			if player ~= LocalPlayer then
-				if v then
-					CreateESP(player)
-				else
-					RemoveESP(player)
-				end
-			end
-		end
-	end })
+        for _,player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                if v then
+                    CreateESP(player)
+                else
+                    RemoveESP(player)
+                end
+            end
+        end
+    end })
 v494:AddToggle("Toggle_112", { Title = "Esp Chest", Description = "", Default = false, Callback = function(v1147)
         _G.ChestESP = v1147
         if not _G.ChestESP then
@@ -8939,13 +8939,13 @@ local LP = Players.LocalPlayer
 
 local SEA
 if game.PlaceId == 2753915549 or game.PlaceId == 85211729168715 then
-	SEA = 1
+    SEA = 1
 elseif game.PlaceId == 4442272183 or game.PlaceId == 79091703265657 then
-	SEA = 2
+    SEA = 2
 elseif game.PlaceId == 7449423635 or game.PlaceId == 100117331123089 then
-	SEA = 3
+    SEA = 3
 else
-	return
+    return
 end
 
 _G.BuyFly = false
@@ -8953,192 +8953,192 @@ local BV, BG
 local TargetPos = nil
 
 local NPCS = {
-	BlackLeg={[1]={Vector3.new(-988,13,3996)},[2]={Vector3.new(-4750.61, 35.08, -4846.33)},[3]={Vector3.new(-5043.64,371.35,-3183.40)}},
-	Electro={[1]={Vector3.new(-5382.27,14.15,-2150.34)},[2]={Vector3.new(-4863.81, 35.08, -4767.54)},[3]={Vector3.new(-4993.20,314.56,-3198.06)}},
-	FishmanKarate={[1]={Vector3.new(61584.35,18.85,988.89)},[2]={Vector3.new(-4960.04, 35.08, -4662.67)},[3]={Vector3.new(-5017.39,371.35,-3187.53)}},
-	Superhuman={[2]={Vector3.new(1378.05, 247.43, -5189.37)},[3]={Vector3.new(-4997.53,371.35,-3197.46)}},
-	DeathStep={[2]={Vector3.new(6360.04, 296.67, -6763.93)},[3]={Vector3.new(-4997.64,314.56,-3220.37)}},
-	SharkmanKarate={[2]={Vector3.new(-2602.40, 239.22, -10314.75)},[3]={Vector3.new(-4970.48,314.56,-3225.04)}},
-	ElectricClaw={[3]={Vector3.new(-10369.83,331.69,-10126.49)}},
-	DragonTalon={[3]={Vector3.new(5662.03,1211.32,858.60)}},
-	GodHuman={[3]={Vector3.new(-13775.56,334.66,-9877.67)}},
-	SanguineArt={[3]={Vector3.new(-16514.86,23.18,-190.84)}}
+    BlackLeg={[1]={Vector3.new(-988,13,3996)},[2]={Vector3.new(-4750.61, 35.08, -4846.33)},[3]={Vector3.new(-5043.64,371.35,-3183.40)}},
+    Electro={[1]={Vector3.new(-5382.27,14.15,-2150.34)},[2]={Vector3.new(-4863.81, 35.08, -4767.54)},[3]={Vector3.new(-4993.20,314.56,-3198.06)}},
+    FishmanKarate={[1]={Vector3.new(61584.35,18.85,988.89)},[2]={Vector3.new(-4960.04, 35.08, -4662.67)},[3]={Vector3.new(-5017.39,371.35,-3187.53)}},
+    Superhuman={[2]={Vector3.new(1378.05, 247.43, -5189.37)},[3]={Vector3.new(-4997.53,371.35,-3197.46)}},
+    DeathStep={[2]={Vector3.new(6360.04, 296.67, -6763.93)},[3]={Vector3.new(-4997.64,314.56,-3220.37)}},
+    SharkmanKarate={[2]={Vector3.new(-2602.40, 239.22, -10314.75)},[3]={Vector3.new(-4970.48,314.56,-3225.04)}},
+    ElectricClaw={[3]={Vector3.new(-10369.83,331.69,-10126.49)}},
+    DragonTalon={[3]={Vector3.new(5662.03,1211.32,858.60)}},
+    GodHuman={[3]={Vector3.new(-13775.56,334.66,-9877.67)}},
+    SanguineArt={[3]={Vector3.new(-16514.86,23.18,-190.84)}}
 }
 
 local function HRP()
-	return LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+    return LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
 end
 
 local LV, AO
 local TargetPos
 
 local function EnsureFly()
-	local hrp = HRP()
-	if not hrp then return end
+    local hrp = HRP()
+    if not hrp then return end
 
-	if not LV or LV.Parent ~= hrp then
-		if LV then LV:Destroy() end
-		LV = Instance.new("LinearVelocity")
-		LV.Attachment0 = hrp:FindFirstChildOfClass("Attachment") or Instance.new("Attachment", hrp)
-		LV.MaxForce = math.huge
-		LV.VectorVelocity = Vector3.zero
-		LV.Parent = hrp
-	end
+    if not LV or LV.Parent ~= hrp then
+        if LV then LV:Destroy() end
+        LV = Instance.new("LinearVelocity")
+        LV.Attachment0 = hrp:FindFirstChildOfClass("Attachment") or Instance.new("Attachment", hrp)
+        LV.MaxForce = math.huge
+        LV.VectorVelocity = Vector3.zero
+        LV.Parent = hrp
+    end
 
-	if not AO or AO.Parent ~= hrp then
-		if AO then AO:Destroy() end
-		AO = Instance.new("AlignOrientation")
-		AO.Attachment0 = hrp:FindFirstChildOfClass("Attachment")
-		AO.MaxTorque = math.huge
-		AO.Responsiveness = 200
-		AO.Parent = hrp
-	end
+    if not AO or AO.Parent ~= hrp then
+        if AO then AO:Destroy() end
+        AO = Instance.new("AlignOrientation")
+        AO.Attachment0 = hrp:FindFirstChildOfClass("Attachment")
+        AO.MaxTorque = math.huge
+        AO.Responsiveness = 200
+        AO.Parent = hrp
+    end
 end
 
 local function StopFly()
-	RunService:UnbindFromRenderStep("BuyFly")
-	if LV then LV:Destroy() LV=nil end
-	if AO then AO:Destroy() AO=nil end
-	TargetPos = nil
+    RunService:UnbindFromRenderStep("BuyFly")
+    if LV then LV:Destroy() LV=nil end
+    if AO then AO:Destroy() AO=nil end
+    TargetPos = nil
 end
 
 local function FlyTo(pos)
-	TargetPos = pos
+    TargetPos = pos
 
-	RunService:BindToRenderStep("BuyFly", Enum.RenderPriority.Character.Value + 1, function()
-		if not _G.BuyFly then StopFly() return end
+    RunService:BindToRenderStep("BuyFly", Enum.RenderPriority.Character.Value + 1, function()
+        if not _G.BuyFly then StopFly() return end
 
-		local hrp = HRP()
-		if not hrp then return end
+        local hrp = HRP()
+        if not hrp then return end
 
-		EnsureFly()
+        EnsureFly()
 
-		for _,v in ipairs(LP.Character:GetDescendants()) do
-			if v:IsA("BasePart") then v.CanCollide = false end
-		end
+        for _,v in ipairs(LP.Character:GetDescendants()) do
+            if v:IsA("BasePart") then v.CanCollide = false end
+        end
 
-		local delta = TargetPos - hrp.Position
-		local dist = delta.Magnitude
+        local delta = TargetPos - hrp.Position
+        local dist = delta.Magnitude
 
-		if dist <= 3 then
-			LV.VectorVelocity = Vector3.zero
-			hrp.AssemblyLinearVelocity = Vector3.zero
-			hrp.CFrame = CFrame.new(TargetPos)
-			return
-		end
+        if dist <= 3 then
+            LV.VectorVelocity = Vector3.zero
+            hrp.AssemblyLinearVelocity = Vector3.zero
+            hrp.CFrame = CFrame.new(TargetPos)
+            return
+        end
 
-		local dir = delta.Unit
-		LV.VectorVelocity = dir * math.clamp(dist * 6, 120, 330)
-		AO.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + dir)
-	end)
+        local dir = delta.Unit
+        LV.VectorVelocity = dir * math.clamp(dist * 6, 120, 330)
+        AO.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + dir)
+    end)
 end
 
 local function Buy(style, remote)
-	task.spawn(function()
-		local pos = NPCS[style] and NPCS[style][SEA]
-		if not pos then return end
+    task.spawn(function()
+        local pos = NPCS[style] and NPCS[style][SEA]
+        if not pos then return end
 
-		FlyTo(pos[1])
+        FlyTo(pos[1])
 
-		repeat task.wait()
-		until (HRP() and (HRP().Position - pos[1]).Magnitude <= 4) or not _G.BuyFly
+        repeat task.wait()
+        until (HRP() and (HRP().Position - pos[1]).Magnitude <= 4) or not _G.BuyFly
 
-		if _G.BuyFly then
-			ReplicatedStorage.Remotes.CommF_:InvokeServer(remote)
-		end
-	end)
+        if _G.BuyFly then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer(remote)
+        end
+    end)
 end
 
 LP.CharacterAdded:Connect(function()
-	task.wait(0.4)
-	if _G.BuyFly and TargetPos then
-		FlyTo(TargetPos)
-	end
+    task.wait(0.4)
+    if _G.BuyFly and TargetPos then
+        FlyTo(TargetPos)
+    end
 end)
 local function StopAllBuy()
-	_G.BuyFly = false
-	StopFly()
+    _G.BuyFly = false
+    StopFly()
 end
 
 v495:AddToggle("Toggle_115", { Title = "Buy Black Leg", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("BlackLeg","BuyBlackLeg")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("BlackLeg","BuyBlackLeg")
+        end
+    end })
 
 v495:AddToggle("Toggle_116", { Title = "Buy Electro", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("Electro","BuyElectro")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("Electro","BuyElectro")
+        end
+    end })
 
 v495:AddToggle("Toggle_117", { Title = "Buy Fishman Karate", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("FishmanKarate","BuyFishmanKarate")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("FishmanKarate","BuyFishmanKarate")
+        end
+    end })
 
 v495:AddToggle("Toggle_118", { Title = "Buy Superhuman", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("Superhuman","BuySuperhuman")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("Superhuman","BuySuperhuman")
+        end
+    end })
 
 v495:AddToggle("Toggle_119", { Title = "Buy Death Step", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("DeathStep","BuyDeathStep")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("DeathStep","BuyDeathStep")
+        end
+    end })
 
 v495:AddToggle("Toggle_120", { Title = "Buy Sharkman Karate", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("SharkmanKarate","BuySharkmanKarate")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("SharkmanKarate","BuySharkmanKarate")
+        end
+    end })
 
 v495:AddToggle("Toggle_121", { Title = "Buy Electric Claw", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("ElectricClaw","BuyElectricClaw")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("ElectricClaw","BuyElectricClaw")
+        end
+    end })
 
 v495:AddToggle("Toggle_122", { Title = "Buy Dragon Talon", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("DragonTalon","BuyDragonTalon")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("DragonTalon","BuyDragonTalon")
+        end
+    end })
 
 v495:AddToggle("Toggle_123", { Title = "Buy God Human", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("GodHuman","BuyGodhuman")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("GodHuman","BuyGodhuman")
+        end
+    end })
 
 v495:AddToggle("Toggle_124", { Title = "Buy Sanguine Art", Description = "", Default = false, Callback = function(v)
-		StopAllBuy()
-		if v then
-			_G.BuyFly = true
-			Buy("SanguineArt","BuySanguineArt")
-		end
-	end })
+        StopAllBuy()
+        if v then
+            _G.BuyFly = true
+            Buy("SanguineArt","BuySanguineArt")
+        end
+    end })
 
 local _ = v495:AddSection("Buy Sea Event Crafting")
 v495:AddButton({ Title = "Craft Dragonheart", Description = "", Callback = function()
@@ -9491,11 +9491,11 @@ local RejoinRunning = false
 -- ===== PEGAR SERVIDOR DIFERENTE =====
 function GetNewServer()
     local Servers = {}
-    
+
     local req = game:HttpGet(
         "https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100"
     )
-    
+
     local data = HttpService:JSONDecode(req)
 
     for _, server in pairs(data.data) do
@@ -9512,25 +9512,25 @@ end
 -- ===== TOGGLE REDZLIB =====
 v496:AddToggle("Toggle_128", { Title = "Anti-reset", Description = "Server hop every 30 minutes", Default = false, Callback = function(Value)
         _G.AutoRejoin30m = Value
-        
+
         if Value and not RejoinRunning then
             RejoinRunning = true
-            
+
             task.spawn(function()
                 while _G.AutoRejoin30m do
                     task.wait(1800) -- 30 minutos
-                    
+
                     if not _G.AutoRejoin30m then break end
-                    
+
                     local NewServer = GetNewServer()
-                    
+
                     if NewServer then
                         TeleportService:TeleportToPlaceInstance(PlaceId, NewServer, Player)
                     else
                         TeleportService:Teleport(PlaceId, Player)
                     end
                 end
-                
+
                 RejoinRunning = false
             end)
         end
@@ -9623,96 +9623,96 @@ local TOGGLE_SAVE_FILE = "movement_toggle_save.txt"
 local MovementEnabled = false
 
 if isfile(TOGGLE_SAVE_FILE) then
-	MovementEnabled = readfile(TOGGLE_SAVE_FILE) == "true"
+    MovementEnabled = readfile(TOGGLE_SAVE_FILE) == "true"
 else
-	writefile(TOGGLE_SAVE_FILE, "false")
+    writefile(TOGGLE_SAVE_FILE, "false")
 end
 
 local WalkSpeedValue = 58
 local JumpValue = 58
 
 if isfile(SPEED_SAVE_FILE) then
-	WalkSpeedValue = tonumber(readfile(SPEED_SAVE_FILE)) or 58
+    WalkSpeedValue = tonumber(readfile(SPEED_SAVE_FILE)) or 58
 else
-	writefile(SPEED_SAVE_FILE, "58")
+    writefile(SPEED_SAVE_FILE, "58")
 end
 
 if isfile(JUMP_SAVE_FILE) then
-	JumpValue = tonumber(readfile(JUMP_SAVE_FILE)) or 58
+    JumpValue = tonumber(readfile(JUMP_SAVE_FILE)) or 58
 else
-	writefile(JUMP_SAVE_FILE, "58")
+    writefile(JUMP_SAVE_FILE, "58")
 end
 
 local function ApplyMovement(char)
-	local hum = char:WaitForChild("Humanoid",5)
-	if not hum then return end
+    local hum = char:WaitForChild("Humanoid",5)
+    if not hum then return end
 
-	if MovementEnabled then
-		hum.WalkSpeed = WalkSpeedValue
-		hum.JumpPower = JumpValue
-	end
+    if MovementEnabled then
+        hum.WalkSpeed = WalkSpeedValue
+        hum.JumpPower = JumpValue
+    end
 
-	hum:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-		if MovementEnabled then
-			hum.WalkSpeed = WalkSpeedValue
-		end
-	end)
+    hum:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+        if MovementEnabled then
+            hum.WalkSpeed = WalkSpeedValue
+        end
+    end)
 
-	hum:GetPropertyChangedSignal("JumpPower"):Connect(function()
-		if MovementEnabled then
-			hum.JumpPower = JumpValue
-		end
-	end)
+    hum:GetPropertyChangedSignal("JumpPower"):Connect(function()
+        if MovementEnabled then
+            hum.JumpPower = JumpValue
+        end
+    end)
 end
 
 LocalPlayer.CharacterAdded:Connect(function(char)
-	task.wait(0.2)
-	ApplyMovement(char)
+    task.wait(0.2)
+    ApplyMovement(char)
 end)
 
 if LocalPlayer.Character then
-	ApplyMovement(LocalPlayer.Character)
+    ApplyMovement(LocalPlayer.Character)
 end
 
 v496:AddToggle("Toggle_131", { Title = "Enable WalkSpeed and Jump", Description = "", Default = MovementEnabled, Callback = function(v)
-		MovementEnabled = v
-		writefile(TOGGLE_SAVE_FILE, tostring(v))
+        MovementEnabled = v
+        writefile(TOGGLE_SAVE_FILE, tostring(v))
 
-		local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-		if hum then
-			if v then
-				hum.WalkSpeed = WalkSpeedValue
-				hum.JumpPower = JumpValue
-			else
-				hum.WalkSpeed = 16
-				hum.JumpPower = 50
-			end
-		end
-	end })
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+        if hum then
+            if v then
+                hum.WalkSpeed = WalkSpeedValue
+                hum.JumpPower = JumpValue
+            else
+                hum.WalkSpeed = 16
+                hum.JumpPower = 50
+            end
+        end
+    end })
 
 v496:AddSlider("Slider_132", { Title = "Speed", Description = "", Min = 26, Max = 300, Default = WalkSpeedValue, Rounding = 0, Callback = function(v)
-		WalkSpeedValue = v
-		writefile(SPEED_SAVE_FILE, tostring(v))
+        WalkSpeedValue = v
+        writefile(SPEED_SAVE_FILE, tostring(v))
 
-		if MovementEnabled then
-			local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-			if hum then
-				hum.WalkSpeed = v
-			end
-		end
-	end })
+        if MovementEnabled then
+            local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+            if hum then
+                hum.WalkSpeed = v
+            end
+        end
+    end })
 
 v496:AddSlider("Slider_133", { Title = "Jump", Description = "", Min = 50, Max = 500, Default = JumpValue, Rounding = 0, Callback = function(v)
-		JumpValue = v
-		writefile(JUMP_SAVE_FILE, tostring(v))
+        JumpValue = v
+        writefile(JUMP_SAVE_FILE, tostring(v))
 
-		if MovementEnabled then
-			local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-			if hum then
-				hum.JumpPower = v
-			end
-		end
-	end })
+        if MovementEnabled then
+            local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+            if hum then
+                hum.JumpPower = v
+            end
+        end
+    end })
 
 v496:AddSection("Visual")
 local Lighting = game:GetService("Lighting")
@@ -9720,45 +9720,45 @@ local FULLBRIGHT_SAVE_FILE = "fullbright_save.txt"
 
 -- Salvar valores originais
 local OriginalLighting = {
-	Ambient = Lighting.Ambient,
-	ColorShift_Bottom = Lighting.ColorShift_Bottom,
-	ColorShift_Top = Lighting.ColorShift_Top,
-	Brightness = Lighting.Brightness,
-	GlobalShadows = Lighting.GlobalShadows
+    Ambient = Lighting.Ambient,
+    ColorShift_Bottom = Lighting.ColorShift_Bottom,
+    ColorShift_Top = Lighting.ColorShift_Top,
+    Brightness = Lighting.Brightness,
+    GlobalShadows = Lighting.GlobalShadows
 }
 
 local function ApplyFullBright(state)
-	if state then
-		Lighting.Ambient = Color3.new(1, 1, 1)
-		Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
-		Lighting.ColorShift_Top = Color3.new(1, 1, 1)
-		Lighting.Brightness = 3
-		Lighting.GlobalShadows = false
-	else
-		-- Restaurar original
-		Lighting.Ambient = OriginalLighting.Ambient
-		Lighting.ColorShift_Bottom = OriginalLighting.ColorShift_Bottom
-		Lighting.ColorShift_Top = OriginalLighting.ColorShift_Top
-		Lighting.Brightness = OriginalLighting.Brightness
-		Lighting.GlobalShadows = OriginalLighting.GlobalShadows
-	end
+    if state then
+        Lighting.Ambient = Color3.new(1, 1, 1)
+        Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
+        Lighting.ColorShift_Top = Color3.new(1, 1, 1)
+        Lighting.Brightness = 3
+        Lighting.GlobalShadows = false
+    else
+        -- Restaurar original
+        Lighting.Ambient = OriginalLighting.Ambient
+        Lighting.ColorShift_Bottom = OriginalLighting.ColorShift_Bottom
+        Lighting.ColorShift_Top = OriginalLighting.ColorShift_Top
+        Lighting.Brightness = OriginalLighting.Brightness
+        Lighting.GlobalShadows = OriginalLighting.GlobalShadows
+    end
 end
 
 local FullBrightEnabled = false
 
 if isfile(FULLBRIGHT_SAVE_FILE) then
-	FullBrightEnabled = readfile(FULLBRIGHT_SAVE_FILE) == "true"
+    FullBrightEnabled = readfile(FULLBRIGHT_SAVE_FILE) == "true"
 else
-	writefile(FULLBRIGHT_SAVE_FILE, "false")
+    writefile(FULLBRIGHT_SAVE_FILE, "false")
 end
 
 ApplyFullBright(FullBrightEnabled)
 
 v496:AddToggle("Toggle_134", { Title = "Full Bright", Description = "", Default = FullBrightEnabled, Callback = function(Value)
-		FullBrightEnabled = Value
-		writefile(FULLBRIGHT_SAVE_FILE, tostring(Value))
-		ApplyFullBright(Value)
-	end })
+        FullBrightEnabled = Value
+        writefile(FULLBRIGHT_SAVE_FILE, tostring(Value))
+        ApplyFullBright(Value)
+    end })
 
 v496:AddButton({ Title = "Remove Sky Fog", Description = "", Callback = function()
     if Lighting:FindFirstChild("LightingLayers") then Lighting.LightingLayers:Destroy() end
@@ -9769,22 +9769,22 @@ end })
 
 
 v496:AddButton({ Title = "FPS Boost", Description = "", Callback = function()
-		for _, v in ipairs(game:GetDescendants()) do
-			if v:IsA("BasePart") then
-				v.Material = Enum.Material.SmoothPlastic
-				v.Reflectance = 0
-			elseif v:IsA("Decal") or v:IsA("Texture") then
-				v:Destroy()
-			elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-				v.Enabled = false
-			elseif v:IsA("Lighting") then
-				v.GlobalShadows = false
-				v.FogEnd = 1e10
-				v.Brightness = 0
-			end
-		end
-		setfpscap(60)
-	end })
+        for _, v in ipairs(game:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.Material = Enum.Material.SmoothPlastic
+                v.Reflectance = 0
+            elseif v:IsA("Decal") or v:IsA("Texture") then
+                v:Destroy()
+            elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+                v.Enabled = false
+            elseif v:IsA("Lighting") then
+                v.GlobalShadows = false
+                v.FogEnd = 1e10
+                v.Brightness = 0
+            end
+        end
+        setfpscap(60)
+    end })
 
 v496:AddSection("Others")
 
@@ -9964,10 +9964,10 @@ local RunService = game:GetService("RunService")
 
 v496:AddToggle("Toggle_140", { Title = "White Screen", Description = "", Default = false, Callback = function(Value)
 
-		_G.WhiteScreen = Value
-		RunService:Set3dRenderingEnabled(not Value)
+        _G.WhiteScreen = Value
+        RunService:Set3dRenderingEnabled(not Value)
 
-	end })
+    end })
 
 print("--[[Hop Server If You Meet Game Admin]]--")
 
