@@ -3844,6 +3844,29 @@ v484:AddParagraph({
     Content = "Current Rank: [ FREE ]\nPremium: Coming Soon" 
 })
 
+local startTime = os.time()
+
+task.spawn(function()
+    while task.wait(1) do
+        local serverTime = os.date("!%X", os.time() + 7 * 3600) -- Giờ VN (UTC+7)
+        local sessionTime = os.time() - startTime
+        
+        -- Tính toán thời gian đã chơi (giờ:phút:giây)
+        local hours = math.floor(sessionTime / 3600)
+        local minutes = math.floor((sessionTime % 3600) / 60)
+        local seconds = sessionTime % 60
+        local sessionStr = string.format("%02d:%02d:%02d", hours, minutes, seconds)
+
+        -- Cập nhật nội dung Paragraph
+        infoStatus:SetTitle("User Statistics")
+        infoStatus:SetDesc(
+            "🕒 Server Time: " .. serverTime .. 
+            "\n⌛ Session Duration: " .. sessionStr ..
+            "\n📶 Ping: " .. game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
+        )
+    end
+end)
+
 _G.SelectWeapon = "Melee"
 task.spawn(function()
     while task.wait() do
