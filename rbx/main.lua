@@ -3803,7 +3803,7 @@ do
     minimizeButton.MouseButton1Click:Connect(function() v466:Minimize() end)
 end
 
-local v484 = v466:AddTab({ Title = "Information", Icon = "info" })
+local v484 = v466:AddTab({ Title = "Dashboard", Icon = "layout-grid" })
 local v485 = v466:AddTab({ Title = "Farm", Icon = "home" })
 local v486 = v466:AddTab({ Title = "Fishing", Icon = "rbxassetid://127664059821666" })
 local v487 = v466:AddTab({ Title = "Quest/Items", Icon = "swords" })
@@ -3816,15 +3816,58 @@ local v494 = v466:AddTab({ Title = "Visual", Icon = "user" })
 local v495 = v466:AddTab({ Title = "Shop", Icon = "shopping-cart" })
 local v496 = v466:AddTab({ Title = "Misc", Icon = "settings" })
 
-v484:AddParagraph({ Title = "Celestiax Hub | Official Sever", Content = "Vào Để Nhận Thông Báo Sớm Nhất Nhé" })
-v484:AddButton({ Title = "Copy Discord Invite", Description = "Copy server link to clipboard", Callback = function()
-    if setclipboard then setclipboard("https://discord.gg/wWHxH6ARU") end
-    Fluent:Notify({ Title = "Discord", Content = "Invite copied!", Duration = 3 })
-end })
-v484:AddParagraph({ Title = "Giao lưu vui vẻ", Content = "Không Toxic Chửi Nhau" })
-v484:AddParagraph({ Title = "Version: V7", Content = "" })
-v484:AddParagraph({ Title = "Freeium Version", Content = "" })
-v484:AddParagraph({ Title = "Premium Version: Comming Soon", Content = "" })
+-- Section: Community
+v484:AddParagraph({ 
+    Title = "CELESTIAX HUB | VERSION 1.0.1", 
+    Content = "Welcome back! Support our community by joining Discord." 
+})
+
+v484:AddButton({ 
+    Title = "Copy Discord Invite", 
+    Description = "Access latest updates & giveaways", 
+    Callback = function()
+        if setclipboard then 
+            setclipboard("https://discord.gg/wWHxH6ARU") 
+            Fluent:Notify({ Title = "System", Content = "Discord link copied to clipboard!", Duration = 3 })
+        end
+    end 
+})
+
+-- Section: Client & Server Info (Dùng Paragraph để cập nhật động)
+local infoStatus = v484:AddParagraph({ 
+    Title = "User Statistics", 
+    Content = "Loading data..." 
+})
+
+-- Section: Subscription Status
+v484:AddParagraph({ 
+    Title = "Account Tier", 
+    Content = "Current Rank: [ FREE ]\nPremium: Coming Soon" 
+})
+
+-- Hàm cập nhật thời gian thực
+local startTime = os.time()
+
+task.spawn(function()
+    while task.wait(1) do
+        local serverTime = os.date("!%X", os.time() + 7 * 3600) -- Giờ VN (UTC+7)
+        local sessionTime = os.time() - startTime
+        
+        -- Tính toán thời gian đã chơi (giờ:phút:giây)
+        local hours = math.floor(sessionTime / 3600)
+        local minutes = math.floor((sessionTime % 3600) / 60)
+        local seconds = sessionTime % 60
+        local sessionStr = string.format("%02d:%02d:%02d", hours, minutes, seconds)
+
+        -- Cập nhật nội dung Paragraph
+        infoStatus:SetTitle("User Statistics")
+        infoStatus:SetDesc(
+            "🕒 Server Time: " .. serverTime .. 
+            "\n⌛ Session Duration: " .. sessionStr ..
+            "\n📶 Ping: " .. game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
+        )
+    end
+end)
 
 _G.SelectWeapon = "Melee"
 task.spawn(function()
@@ -3866,28 +3909,12 @@ local _ = v485:AddDropdown("WeaponType", { Title = "Select Tool", Description = 
         _G.SelectWeapon = v506
     end })
 
-v485:AddDropdown("Dropdown_1", { Title = "UI Scale", Description = "Chọn Size Ui", Values = {
-        "Small",
-        "Large",
-        "Bigger"
-    }, Multi = false, Default = "Large", Callback = function(p36)
-        if p36 == "Small" then
-            vu32:SetScale(799)
-        elseif p36 == "Large" then
-            vu32:SetScale(450)
-        elseif p36 == "Bigger" then
-            vu32:SetScale(300)  
-        else
-            vu32:SetScale(450)
-        end
-    end })
 local _ = v485:AddSection("Farm")
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
-
 
 local SUBMERGED_Y = -1400
 local SUB_NPC = CFrame.new(-16246.041, 38.48, 1376.539)
