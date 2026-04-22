@@ -9997,15 +9997,15 @@ SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
 SaveManager:IgnoreThemeSettings()
 SaveManager:SetIgnoreIndexes({})
-InterfaceManager:SetFolder("CelestiaXHub")
-SaveManager:SetFolder("CelestiaXHub/BloxFruits")
+InterfaceManager:SetFolder("CelestiaxHub")
+SaveManager:SetFolder("CelestiaxHub/BloxFruits")
 InterfaceManager:BuildInterfaceSection(_SettingsTab)
 SaveManager:BuildConfigSection(_SettingsTab)
 SaveManager:LoadAutoloadConfig()
 
 v466:SelectTab(1)
 Fluent:Notify({
-    Title = "CelestiaX Hub",
+    Title = "Celestiax Hub",
     Content = "Loaded successfully",
     Duration = 5,
 })
