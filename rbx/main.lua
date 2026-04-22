@@ -3816,7 +3816,7 @@ local v494 = v466:AddTab({ Title = "Visual", Icon = "user" })
 local v495 = v466:AddTab({ Title = "Shop", Icon = "shopping-cart" })
 local v496 = v466:AddTab({ Title = "Misc", Icon = "settings" })
 
-v484:AddParagraph({ Title = "Night Slayer | Official Sever", Content = "Vào Để Nhận Thông Báo Sớm Nhất Nhé" })
+v484:AddParagraph({ Title = "Celestiax Hub | Official Sever", Content = "Vào Để Nhận Thông Báo Sớm Nhất Nhé" })
 v484:AddButton({ Title = "Copy Discord Invite", Description = "Copy server link to clipboard", Callback = function()
     if setclipboard then setclipboard("https://discord.gg/wWHxH6ARU") end
     Fluent:Notify({ Title = "Discord", Content = "Invite copied!", Duration = 3 })
@@ -3825,6 +3825,7 @@ v484:AddParagraph({ Title = "Giao lưu vui vẻ", Content = "Không Toxic Chửi
 v484:AddParagraph({ Title = "Version: V7", Content = "" })
 v484:AddParagraph({ Title = "Freeium Version", Content = "" })
 v484:AddParagraph({ Title = "Premium Version: Comming Soon", Content = "" })
+
 _G.SelectWeapon = "Melee"
 task.spawn(function()
     while task.wait() do
