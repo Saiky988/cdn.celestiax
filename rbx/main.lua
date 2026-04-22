@@ -3804,7 +3804,6 @@ do
 end
 
 local v484 = v466:AddTab({ Title = "Dashboard", Icon = "layout-grid" })
-local v482 = v466:AddTab({ Title = "Config", Icon = "bolt" })
 local v485 = v466:AddTab({ Title = "Farm", Icon = "home" })
 local v486 = v466:AddTab({ Title = "Fishing", Icon = "rbxassetid://127664059821666" })
 local v487 = v466:AddTab({ Title = "Quest/Items", Icon = "swords" })
