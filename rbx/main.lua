@@ -3839,47 +3839,6 @@ v484:AddParagraph({
     Content = "Current Rank: [ FREE ]\nPremium: Coming Soon" 
 })
 
--- Section: Client & Server Info
-local infoStatus = v484:AddParagraph({ 
-    Title = "User Statistics", 
-    Content = "Initializing..." 
-})
-
--- Hàm cập nhật thời gian thực
-local startTime = os.time()
-
--- Dùng task.spawn để không làm treo script chính
-task.spawn(function()
-    -- Vòng lặp sẽ tự dừng nếu không tìm thấy infoStatus (tránh memory leak)
-    while infoStatus do 
-        local success, err = pcall(function()
-            local serverTime = os.date("!%X", os.time() + 7 * 3600) -- Giờ VN
-            local sessionTime = os.time() - startTime
-            
-            local hours = math.floor(sessionTime / 3600)
-            local minutes = math.floor((sessionTime % 3600) / 60)
-            local seconds = sessionTime % 60
-            local sessionStr = string.format("%02d:%02d:%02d", hours, minutes, seconds)
-            
-            -- Lấy Ping hiện tại
-            local ping = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
-            
-            -- CÁCH FIX CHÍNH: Cập nhật trực tiếp vào thuộc tính Content của Fluent
-            infoStatus.Content = "🕒 Server Time: " .. serverTime .. 
-                                 "\n⌛ Session: " .. sessionStr ..
-                                 "\n📶 Ping: " .. math.floor(ping) .. " ms"
-        end)
-        
-        if not success then 
-            warn("Update Info Error: " .. err)
-            break 
-        end
-        
-        task.wait(1)
-    end
-end)
-
-
 _G.SelectWeapon = "Melee"
 task.spawn(function()
     while task.wait() do
