@@ -11046,9 +11046,6 @@ task.spawn(function()
     end
 end)
 
-return redzlib
-
-
   -- ====== Settings tab + SaveManager / InterfaceManager ======
   do
       local _SettingsTab = v466:AddTab({ Title = "Config", Icon = "settings" })
@@ -11065,4 +11062,3 @@ return redzlib
 
   v466:SelectTab(1)
   Fluent:Notify({ Title = "Night Slayer Hub", Content = "UI converted to Fluent. Loaded successfully!", Duration = 5 })
-  
