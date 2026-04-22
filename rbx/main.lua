@@ -3824,7 +3824,7 @@ v483:AddParagraph({
     Content = "Welcome back! Support our community by joining Discord." 
 })
 
-v482:AddButton({ 
+v483:AddButton({ 
     Title = "Copy Discord Invite", 
     Description = "Access latest updates & giveaways", 
     Callback = function()
