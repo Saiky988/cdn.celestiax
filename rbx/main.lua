@@ -3833,10 +3833,16 @@ v484:AddButton({
         end
     end 
 })
-v484:AddParagraph({ Title = "Giao lưu vui vẻ", Content = "Không Toxic Chửi Nhau" })
-v484:AddParagraph({ Title = "Version: V7", Content = "" })
-v484:AddParagraph({ Title = "Freeium Version", Content = "" })
-v484:AddParagraph({ Title = "Premium Version: Comming Soon", Content = "" })
+
+local infoStatus = v484:AddParagraph({ 
+    Title = "User Statistics", 
+    Content = "Loading data..." 
+})
+
+v484:AddParagraph({ 
+    Title = "Account Tier", 
+    Content = "Current Rank: [ FREE ]\nPremium: Coming Soon" 
+})
 
 _G.SelectWeapon = "Melee"
 task.spawn(function()
