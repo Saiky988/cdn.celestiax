@@ -3804,14 +3804,14 @@ do
 end
 
 local v484 = v466:AddTab({ Title = "Dashboard", Icon = "layout-grid" })
-local v496 = v466:AddTab({ Title = "Configs", Icon = "bolt" })
+local v496 = v466:AddTab({ Title = "Configs", Icon = "settings-2" })
 local v485 = v466:AddTab({ Title = "Farm", Icon = "home" })
 local v486 = v466:AddTab({ Title = "Fishing", Icon = "rbxassetid://127664059821666" })
 local v487 = v466:AddTab({ Title = "Quest/Items", Icon = "swords" })
 local v491 = v466:AddTab({ Title = "Raid/Fruits", Icon = "cherry" })
 local v489 = v466:AddTab({ Title = "Sea Event", Icon = "waves" })
-local v497 = v466:AddTab({ Title = "Stats", Icon = "signal" })
-local v493 = v466:AddTab({ Title = "Teleport", Icon = "locate" })
+local v497 = v466:AddTab({ Title = "Stats", Icon = "chart-area" })
+local v493 = v466:AddTab({ Title = "Teleport", Icon = "map-pinned" })
 local v499 = v466:AddTab({ Title = "Status", Icon = "scroll" })
 local v494 = v466:AddTab({ Title = "Visual", Icon = "user" })
 local v495 = v466:AddTab({ Title = "Shop", Icon = "shopping-cart" })
