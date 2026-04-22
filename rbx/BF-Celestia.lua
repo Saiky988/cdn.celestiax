@@ -3769,7 +3769,7 @@ do
     minimizeButton.BorderSizePixel = 0
     minimizeButton.Position = UDim2.new(0, 585, 0, 50)
     minimizeButton.Size     = UDim2.new(0, 48, 0, 48)
-    minimizeButton.Image    = "rbxassetid://94614883113293"
+    minimizeButton.Image    = "rbxassetid://79778390466019"
     minimizeButton.ImageTransparency = 0
     buttonCorner.CornerRadius = UDim.new(0.25, 0)
     buttonCorner.Parent = minimizeButton
@@ -3828,7 +3828,7 @@ v484:AddButton({
     Description = "Access latest updates & giveaways", 
     Callback = function()
         if setclipboard then 
-            setclipboard("https://discord.gg/wWHxH6ARU") 
+            setclipboard("https://discord.gg/rGmH5NpGZ") 
             Fluent:Notify({ Title = "System", Content = "Discord link copied to clipboard!", Duration = 3 })
         end
     end 
