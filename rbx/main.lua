@@ -3727,9 +3727,7 @@ function CheckItemBPCRBPCR(v463)
         end
     end
 end
--- ===== Fluent UI bootstrap (converted from redz) =====
--- Globals on purpose: avoids exhausting Luau's per-function local register
--- budget in this very large main chunk.
+-- ===== Fluent UI =====
 Fluent           = loadstring(game:HttpGet("https://raw.githubusercontent.com/discoart/FluentPlus/refs/heads/main/Beta.lua", true))()
 SaveManager      = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
@@ -3745,21 +3743,21 @@ do
         or LP:WaitForChild("PlayerGui")
 
     v466 = Fluent:CreateWindow({
-        Title = "Night Slayer Hub [V7]",
-        SubTitle = "By Real_NightSlayer (Fluent UI)",
+        Title = "Celestiax Hub | Blox Fruits",
+        SubTitle = "v1.0.1",
         Searchable = true,
         TabWidth = 160,
-        Size = UDim2.fromOffset(560, 400),
+        Size = UDim2.fromOffset(470, 330),
         Acrylic = true,
         Theme = "Dark",
         MinimizeKey = Enum.KeyCode.LeftControl,
         UserInfo = true,
         UserInfoTitle = LP.DisplayName,
-        UserInfoSubtitle = "Night Slayer",
+        UserInfoSubtitle = "Freemium",
         UserInfoSubtitleColor = Color3.fromRGB(71, 123, 255),
     })
 
-    -- Mobile Minimize Button (draggable) -- preserved from redz behavior
+    -- Mobile Minimize Button --
     local screenGui      = Instance.new("ScreenGui")
     local minimizeButton = Instance.new("ImageButton")
     local buttonCorner   = Instance.new("UICorner")
@@ -3769,11 +3767,11 @@ do
     minimizeButton.Parent = screenGui
     minimizeButton.BackgroundTransparency = 1
     minimizeButton.BorderSizePixel = 0
-    minimizeButton.Position = UDim2.new(0, 60, 0, 50)
+    minimizeButton.Position = UDim2.new(0, 585, 0, 50)
     minimizeButton.Size     = UDim2.new(0, 48, 0, 48)
-    minimizeButton.Image    = "rbxassetid://96779554580445"
+    minimizeButton.Image    = "rbxassetid://94614883113293"
     minimizeButton.ImageTransparency = 0
-    buttonCorner.CornerRadius = UDim.new(0.5, 0)
+    buttonCorner.CornerRadius = UDim.new(0.25, 0)
     buttonCorner.Parent = minimizeButton
 
     local dragging, dragInput, touchPos, buttonPos
