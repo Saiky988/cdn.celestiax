@@ -2,7 +2,7 @@
 repeat task.wait() until game:IsLoaded()
 
 local Player = game.Players.LocalPlayer
-local SelectedGame = getgenv().game
+local SelectedGame = getgenv().sgame
 local UniverseID = game.GameId
 
 local ScriptList = {
