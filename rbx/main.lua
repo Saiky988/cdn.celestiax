@@ -3816,6 +3816,8 @@ local v494 = v466:AddTab({ Title = "Visual", Icon = "user" })
 local v495 = v466:AddTab({ Title = "Shop", Icon = "shopping-cart" })
 local v496 = v466:AddTab({ Title = "Misc", Icon = "settings" })
 
+local _ = v484:AddSection("Dashboard")
+
 v484:AddParagraph({ Title = "Celestiax Hub | Official Sever", Content = "Vào Để Nhận Thông Báo Sớm Nhất Nhé" })
 v484:AddButton({ Title = "Copy Discord Invite", Description = "Copy server link to clipboard", Callback = function()
     if setclipboard then setclipboard("https://discord.gg/wWHxH6ARU") end
