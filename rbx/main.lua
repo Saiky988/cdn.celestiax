@@ -3803,7 +3803,8 @@ do
     minimizeButton.MouseButton1Click:Connect(function() v466:Minimize() end)
 end
 
-local v484 = v466:AddTab({ Title = "Dashboard", Icon = "layout-grid" })
+local v483 = v466:AddTab({ Title = "Dashboard", Icon = "layout-grid" })
+local v484 = v466:AddTab({ Title = "Config", Icon = "bolt" })
 local v485 = v466:AddTab({ Title = "Farm", Icon = "home" })
 local v486 = v466:AddTab({ Title = "Fishing", Icon = "rbxassetid://127664059821666" })
 local v487 = v466:AddTab({ Title = "Quest/Items", Icon = "swords" })
@@ -3816,14 +3817,14 @@ local v494 = v466:AddTab({ Title = "Visual", Icon = "user" })
 local v495 = v466:AddTab({ Title = "Shop", Icon = "shopping-cart" })
 local v496 = v466:AddTab({ Title = "Misc", Icon = "settings" })
 
-local _ = v484:AddSection("Dashboard")
+local _ = v483:AddSection("Dashboard")
 
-v484:AddParagraph({ 
+v483:AddParagraph({ 
     Title = "CELESTIAX HUB | VERSION 1.0.1", 
     Content = "Welcome back! Support our community by joining Discord." 
 })
 
-v484:AddButton({ 
+v482:AddButton({ 
     Title = "Copy Discord Invite", 
     Description = "Access latest updates & giveaways", 
     Callback = function()
@@ -3834,7 +3835,7 @@ v484:AddButton({
     end 
 })
 
-v484:AddParagraph({ 
+v483:AddParagraph({ 
     Title = "Account Tier", 
     Content = "Current Rank: [ FREE ]\nPremium: Coming Soon" 
 })
@@ -3875,7 +3876,9 @@ task.spawn(function()
         end)
     end
 end)
-local _ = v485:AddDropdown("WeaponType", { Title = "Select Tool", Description = "Chọn Công Cụ", Values = {"Melee", "Sword", "Gun", "Blox Fruit"}, Multi = false, Default = "Melee", Callback = function(v506)
+
+local _ = v484:AddSection("Dashboard")
+local _ = v484:AddDropdown("WeaponType", { Title = "Select Tool", Description = "Chọn Công Cụ", Values = {"Melee", "Sword", "Gun", "Blox Fruit"}, Multi = false, Default = "Melee", Callback = function(v506)
         _G.SelectWeapon = v506
     end })
 
