@@ -9999,15 +9999,15 @@ SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
 SaveManager:IgnoreThemeSettings()
 SaveManager:SetIgnoreIndexes({})
-InterfaceManager:SetFolder("NightSlayerHub")
-SaveManager:SetFolder("NightSlayerHub/BloxFruits")
+InterfaceManager:SetFolder("CelestiaXHub")
+SaveManager:SetFolder("CelestiaXHub/BloxFruits")
 InterfaceManager:BuildInterfaceSection(_SettingsTab)
 SaveManager:BuildConfigSection(_SettingsTab)
 SaveManager:LoadAutoloadConfig()
 
 v466:SelectTab(1)
 Fluent:Notify({
-    Title = "Night Slayer Hub",
-    Content = "Loaded successfully (Fluent UI)",
+    Title = "CelestiaX Hub",
+    Content = "Loaded successfully",
     Duration = 5,
 })
