@@ -3834,7 +3834,7 @@ v484:AddButton({
     end 
 })
 
-local infoStatus = v484:AddParagraph({ 
+v484:AddParagraph({ 
     Title = "User Statistics", 
     Content = "Loading data..." 
 })
