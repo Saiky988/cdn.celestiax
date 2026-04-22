@@ -3816,66 +3816,15 @@ local v494 = v466:AddTab({ Title = "Visual", Icon = "user" })
 local v495 = v466:AddTab({ Title = "Shop", Icon = "shopping-cart" })
 local v496 = v466:AddTab({ Title = "Misc", Icon = "settings" })
 
-local startTime = os.time()
-
-local function getPlayTime()
-    local seconds = os.time() - startTime
-    local mins = math.floor(seconds / 60)
-    local hrs = math.floor(mins / 60)
-    return string.format("%02d:%02d:%02d", hrs, mins % 60, seconds % 60)
-end
-
-v484:AddSection("Status")
-
-v484:AddParagraph({ 
-    Title = "CelestiaX Hub | Official", 
-    Content = "Current Version: v1.0.1 [Stable]\nEdition: Freemium" 
-})
-
--- Section: User & Session Info (Cập nhật thời gian)
-local sessionInfo = v484:AddParagraph({ 
-    Title = "Session Statistics", 
-    Content = "Loading details..." 
-})
-
--- Cập nhật thông tin thời gian mỗi giây
-task.spawn(function()
-    while task.wait(1) do
-        local serverTime = os.date("!*t") -- UTC Time hoặc dùng os.date("*t") cho local
-        sessionInfo:SetDesc(string.format(
-            "📅 Date: %s\n⏰ Server Time: %02d:%02d:%02d\n⏳ Playtime: %s",
-            os.date("%Y-%m-%d"),
-            serverTime.hour, serverTime.min, serverTime.sec,
-            getPlayTime()
-        ))
-    end
-end)
-
--- Section: Community
-v484:AddSection("Community & Support")
-
-v484:AddButton({ 
-    Title = "Copy Discord Invite", 
-    Description = "Join our community for latest updates", 
-    Callback = function()
-        if setclipboard then 
-            setclipboard("https://discord.gg/wWHxH6ARU") 
-            Fluent:Notify({ Title = "Discord", Content = "Invite link copied to clipboard!", Duration = 3 })
-        end
-    end 
-})
-
-v484:AddParagraph({ 
-    Title = "Community Guidelines", 
-    Content = "• Be respectful to others\n• No toxic behavior\n• Report bugs via Discord" 
-})
-
--- Section: Upcoming Features
-v484:AddSection("Roadmap")
-v484:AddParagraph({ 
-    Title = "Premium Version", 
-    Content = "Status: Development Phase (Coming Soon...)" 
-})
+v484:AddParagraph({ Title = "Celestiax Hub | Official Sever", Content = "Vào Để Nhận Thông Báo Sớm Nhất Nhé" })
+v484:AddButton({ Title = "Copy Discord Invite", Description = "Copy server link to clipboard", Callback = function()
+    if setclipboard then setclipboard("https://discord.gg/wWHxH6ARU") end
+    Fluent:Notify({ Title = "Discord", Content = "Invite copied!", Duration = 3 })
+end })
+v484:AddParagraph({ Title = "Giao lưu vui vẻ", Content = "Không Toxic Chửi Nhau" })
+v484:AddParagraph({ Title = "Version: V7", Content = "" })
+v484:AddParagraph({ Title = "Freeium Version", Content = "" })
+v484:AddParagraph({ Title = "Premium Version: Comming Soon", Content = "" })
 
 _G.SelectWeapon = "Melee"
 task.spawn(function()
