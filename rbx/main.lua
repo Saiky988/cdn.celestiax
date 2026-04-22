@@ -3803,7 +3803,7 @@ do
     minimizeButton.MouseButton1Click:Connect(function() v466:Minimize() end)
 end
 
-local v484 = v466:AddTab({ Title = "Information", Icon = "info" })
+local v484 = v466:AddTab({ Title = "Dashboard", Icon = "layout-grid" })
 local v485 = v466:AddTab({ Title = "Farm", Icon = "home" })
 local v486 = v466:AddTab({ Title = "Fishing", Icon = "rbxassetid://127664059821666" })
 local v487 = v466:AddTab({ Title = "Quest/Items", Icon = "swords" })
@@ -3818,11 +3818,21 @@ local v496 = v466:AddTab({ Title = "Misc", Icon = "settings" })
 
 local _ = v484:AddSection("Dashboard")
 
-v484:AddParagraph({ Title = "Celestiax Hub | Official Sever", Content = "Vào Để Nhận Thông Báo Sớm Nhất Nhé" })
-v484:AddButton({ Title = "Copy Discord Invite", Description = "Copy server link to clipboard", Callback = function()
-    if setclipboard then setclipboard("https://discord.gg/wWHxH6ARU") end
-    Fluent:Notify({ Title = "Discord", Content = "Invite copied!", Duration = 3 })
-end })
+v484:AddParagraph({ 
+    Title = "CELESTIAX HUB | VERSION 1.0.1", 
+    Content = "Welcome back! Support our community by joining Discord." 
+})
+
+v484:AddButton({ 
+    Title = "Copy Discord Invite", 
+    Description = "Access latest updates & giveaways", 
+    Callback = function()
+        if setclipboard then 
+            setclipboard("https://discord.gg/wWHxH6ARU") 
+            Fluent:Notify({ Title = "System", Content = "Discord link copied to clipboard!", Duration = 3 })
+        end
+    end 
+})
 v484:AddParagraph({ Title = "Giao lưu vui vẻ", Content = "Không Toxic Chửi Nhau" })
 v484:AddParagraph({ Title = "Version: V7", Content = "" })
 v484:AddParagraph({ Title = "Freeium Version", Content = "" })
