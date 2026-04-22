@@ -3804,7 +3804,6 @@ do
 end
 
 local v484 = v466:AddTab({ Title = "Dashboard", Icon = "layout-grid" })
-local v483 = v466:AddTab({ Title = "Config", Icon = "bolt" })
 local v485 = v466:AddTab({ Title = "Farm", Icon = "home" })
 local v486 = v466:AddTab({ Title = "Fishing", Icon = "rbxassetid://127664059821666" })
 local v487 = v466:AddTab({ Title = "Quest/Items", Icon = "swords" })
@@ -3877,7 +3876,7 @@ task.spawn(function()
     end
 end)
 
-local _ = v484:AddSection("Dashboard")
+
 local _ = v485:AddDropdown("WeaponType", { Title = "Select Tool", Description = "Chọn Công Cụ", Values = {"Melee", "Sword", "Gun", "Blox Fruit"}, Multi = false, Default = "Melee", Callback = function(v506)
         _G.SelectWeapon = v506
     end })
